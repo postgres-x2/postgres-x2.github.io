@@ -1,0 +1,87 @@
+*  {font-family:Arial;}
+h1 {color:darkmagenta;
+    font-size:34pt;}
+h2 {border-bottom-color:#993300;
+    border-bottom-width:2px;
+    border-bottom-style:solid;
+   }
+h2.plain{border-bottom-color:#000000;
+	 border-bottom-width:0px;
+	}
+h3 {margin-left:0.8em;
+    border-left-width:7px;
+    border-left-style:solid;
+    border-left-color:#993300;
+    text-indent:6px;
+    }
+h4 {margin-left:1.8em;
+    border-left-width:4px;
+    border-left-style:solid;
+    border-left-color:#993300;
+    text-indent:6px;
+    }
+
+p {font-size:90%;
+   margin-left:1em;
+   font-family:Arial;}
+/* Paragraph for various places */
+.h2p {font-size:90%;	/* after <h2> header */
+   margin-left:1em;
+   font-family:Arial;}
+.h3p {font-size:90%;	/* after <h3> header */
+   margin-left:2em;
+   font-family:Arial;}
+.h4p {font-size:90%;	/* after <h4> header */
+   margin-left:3em;
+   font-family:Arial;}
+/* <plain> --> left margin should be the same as the parent
+p.plain{font-size:90%;
+	margin-left:0em;
+	font-family:Arial;}
+ */
+p.plain{font-size:90%;
+	font-family:Arial;}
+tt {font-family:monospace;}
+p em {font-size:90%;
+      font-style:oblique;}
+p bf {font-size:90%;
+      font-weight:bolder;}
+p.inner{font-size:90%;
+        margin-left:3em}
+p.box {font-size:90%;
+       border-width:2px;
+       border-style:solid;
+       padding:5px;}
+p.innerbox {font-size:90%;
+       margin-left:2em;
+       border-width:2px;
+       border-style:solid;
+       padding:5px;}
+li {font-size:90%;
+    margin-top:4pt;
+    margin-bottom:4pt;}
+li.inner {font-size:90%;
+          margin-top:4pt;
+          margin-bottom:4pt;
+          margin-left:1em;
+         }
+.eod {font-size:80%;
+	font-family:Arial;
+	margin-right:2em;
+	text-align:right;}
+li tt {font-size:90%;
+       font-family:monospace;}
+/*
+ * Old link color
+
+a:link {color:#000000;}
+a:visited {color:#000000;}
+a:hover {color:#CC0033;}
+a:active {color:#CC0033;}
+
+*/
+/* Link color */
+a:link {color: #0000ff;}
+a:visited {color: #000080;}
+a:hover {color: #ff0000;}
+a:active {color: #ff8000;}
