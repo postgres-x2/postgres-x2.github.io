@@ -1,0 +1,271 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Barrier</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.0.4 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Reliability and the Write-Ahead Log"
+HREF="wal.html"><LINK
+REL="PREVIOUS"
+TITLE="WAL Internals"
+HREF="wal-internals.html"><LINK
+REL="NEXT"
+TITLE="Regression Tests"
+HREF="regress.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:50:53"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.0.4 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="WAL Internals"
+HREF="wal-internals.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Reliability and the Write-Ahead Log"
+HREF="wal.html"
+>Fast Backward</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 28. Reliability and the Write-Ahead Log</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Reliability and the Write-Ahead Log"
+HREF="wal.html"
+>Fast Forward</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Regression Tests"
+HREF="regress.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="BARRIERS"
+>28.6. Barrier</A
+></H1
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>   Its important to ensure that any global transaction in the cluster
+   must either be committed on all the nodes or none of the nodes. If
+   the global recovery is done in a way such that on one node the
+   <ACRONYM
+CLASS="ACRONYM"
+>WAL</ACRONYM
+> recovery stops after a commit record of some
+   global transaction is processed, but stops before the commit record for
+   the same transaction is processed on some other node, the cluster may
+   be left in an inconsistent state. Since the commit messages of global
+   transactions can arrive out-of-order on different nodes, its very hard
+   to find a common synchronization point. For example, for two global
+   transactions T1 and T2, the commit messages for these transactions
+   can arrive on nodes N1 and N2 such that N1 receives commit message
+   for T1 first and N2 receives commit message T2 first. In this case,
+   during <ACRONYM
+CLASS="ACRONYM"
+>PITR</ACRONYM
+>, irrespective of whether we stop at
+   T1 or T2, the cluster would lose its consistency since at least one
+   transaction will be marked as committed on one node and as aborted
+   on the other node.
+  </P
+><P
+>   During recovery, it can be hard and even impossible to find
+   cluster-wide consistent synchronization points. In fact, such
+   synchronization points may not exists at all. Postgres-XC provides
+   a mechanism to create such synchronization points, called barriers,
+   during normal operation. A barrier can be created by using a SQL
+   command <TT
+CLASS="COMMAND"
+>BARRIER</TT
+>
+  </P
+><P
+>   User must connect to one of the Coordinators and issue the
+   <TT
+CLASS="COMMAND"
+>BARRIER</TT
+> command, optionally followed by an
+   identifier. If user does not specify an identifier, an unique
+   identifier will be generated and returned to the caller.  Upon
+   receiving the <TT
+CLASS="COMMAND"
+>BARRIER</TT
+> command, the Coordinator
+   temporarily pauses any new two-phase commits. It also communicates with
+   other Coordinators to ensure that there are no in-progress two-phase
+   commits in the cluster. At that point, a barrier <ACRONYM
+CLASS="ACRONYM"
+>WAL</ACRONYM
+>
+   record along with the user-given or system-generated BARRIER identifier
+   is writtent to the <ACRONYM
+CLASS="ACRONYM"
+>WAL</ACRONYM
+> stream of all Datanodes and
+   the Coordinators.
+  </P
+><P
+>   User can create as many barriers as she wants to. At the time of
+   point-in-time-recovery, same barrier id must be specified in the
+   <TT
+CLASS="FILENAME"
+>recovery.conf</TT
+> files of all the Coordinators and
+   Datanodes. When every node in the cluster recovers to the same barrier
+   id, a cluster-wide consistent state is reached. Its important that
+   the recovery must be started from a backup taken before the barrier
+   was generated. If no matching barrier record is found, either because
+   the barrier was created before the base backup used for the recovery
+   or the said barrier was never created, the recovery is run to the end.
+  </P
+><P
+>   Note that in the current release, Postgres-XC has no means to detect
+   if another barrier with the same name already exists. So the user
+   must be careful while choosing a barrier identifier and ensure
+   that an unique identifier is used for every barrier. Similarly, at
+   the time of recovery, user must specify the same barrier id in the
+   <TT
+CLASS="FILENAME"
+>recovery.conf</TT
+> file on all the nodes. Otherwise,
+   the cluster would not recover to a global consistent image.
+  </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="wal-internals.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="regress.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>WAL Internals</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="wal.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Regression Tests</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

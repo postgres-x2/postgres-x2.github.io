@@ -1,0 +1,835 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>gtm</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.1.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="PostgreSQL Server Applications"
+HREF="reference-server.html"><LINK
+REL="PREVIOUS"
+TITLE="PostgreSQL Server Applications"
+HREF="reference-server.html"><LINK
+REL="NEXT"
+TITLE="gtm_proxy"
+HREF="app-gtm-proxy.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:47:50"></HEAD
+><BODY
+CLASS="REFENTRY"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.1.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="PostgreSQL Server Applications"
+HREF="reference-server.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="reference-server.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="gtm_proxy"
+HREF="app-gtm-proxy.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="APP-GTM"
+></A
+>gtm</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN87195"
+></A
+><H2
+>Name</H2
+>gtm&nbsp;--&nbsp;   provides global transaction management feature to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>.
+  </DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN87201"
+></A
+><H2
+>Synopsis</H2
+><P
+><TT
+CLASS="COMMAND"
+>gtm</TT
+> [<TT
+CLASS="REPLACEABLE"
+><I
+>option</I
+></TT
+>...]</P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="R1-APP-GTM-1"
+></A
+><H2
+>   Description
+  </H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>   gtm provides consistent transaction manager fully compatible with
+   vanilla PostgreSQL. It is highly advised to start and stop gtm
+   using gtm_ctl(8).
+  </P
+><P
+>   You must provide gtm configuration
+   file <TT
+CLASS="FILENAME"
+>gtm.conf</TT
+> placed at gtm working directory
+   as specified by <TT
+CLASS="LITERAL"
+>-D</TT
+> command line option. The
+   configuration file specifies gtm running environment and resources.
+  </P
+><P
+>   Some of the parameters specified in the control file can be overridden by 
+   command line options.
+  </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN87216"
+></A
+><H2
+>Configuration File</H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>   <TT
+CLASS="LITERAL"
+>GTM</TT
+> configuration parameters are specified in the configuration file 
+   <TT
+CLASS="FILENAME"
+>gtm.conf</TT
+> placed in the working directory
+   specified as <TT
+CLASS="LITERAL"
+>-D</TT
+> option
+   of <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+> command line option as described
+   in the next section.
+  </P
+><P
+>   Format of the configuration file is the same as <TT
+CLASS="FILENAME"
+>postgresql.conf</TT
+>.
+   Options are as follows.
+  </P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><A
+NAME="GTM-OPT-ACTIVE-HOST"
+></A
+><TT
+CLASS="VARNAME"
+>active_host</TT
+> (<TT
+CLASS="TYPE"
+>string</TT
+>)</DT
+><DD
+><P
+>      Specifies listen addresses (host name or IP address) of active <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>.  This
+      parameter is effective only when this <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>
+      is specified as a standby.  There is no default value for this parameter.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-OPT-ACTIVE-PORT"
+></A
+><TT
+CLASS="VARNAME"
+>active_port</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies the port number of active <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>.  This
+      parameter is effective only when this <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>
+      is specified as a standby.
+      There is no default value for this parameter.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-OPT-KEEPALIVES-COUNT"
+></A
+><TT
+CLASS="VARNAME"
+>keepalives_count</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies <TT
+CLASS="LITERAL"
+>keepalives_count</TT
+> option for the
+      connection to <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>.  This option is
+      effective only when it runs as GTM-Standby.
+      Default value is zero and keepalives feature is disabled.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-OPT-KEEPALIVES-IDLE"
+></A
+><TT
+CLASS="VARNAME"
+>keepalives_idle</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies <TT
+CLASS="LITERAL"
+>keepalives_idle</TT
+> option for the
+      connection to <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>.  This option is
+      effective only when it runs as GTM-Standby.
+      Default value is zero and keepalives feature is disabled.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-OPT-KEEPALIVES-INTERVAL"
+></A
+><TT
+CLASS="VARNAME"
+>keepalives_interval</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies <TT
+CLASS="LITERAL"
+>keepalives_interval</TT
+> option for the
+      connection to <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>.  This option is
+      effective only when it runs as GTM-Standby.
+      Default value is zero and keepalives feature is disabled.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-OPT-LISTEN-ADDRESSES"
+></A
+><TT
+CLASS="VARNAME"
+>listen_addresses</TT
+> (<TT
+CLASS="TYPE"
+>string</TT
+>)</DT
+><DD
+><P
+>      Specifies listen addresses (host name or IP address) of
+      this <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>
+      or <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+> standby.
+      Default value is '*'.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-OPT-LOG-FILE"
+></A
+><TT
+CLASS="VARNAME"
+>log_file</TT
+> (<TT
+CLASS="TYPE"
+>string</TT
+>)</DT
+><DD
+><P
+>      Specifies <TT
+CLASS="FILENAME"
+>log</TT
+> file name.  This file will be
+      created at the working directory of
+      this <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+> as specified
+      by <TT
+CLASS="LITERAL"
+>-D</TT
+> command line option.
+      The default is <TT
+CLASS="FILENAME"
+>gtm.log</TT
+>.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-OPT-LOG-MIN-MESSAGES"
+></A
+><TT
+CLASS="VARNAME"
+>log_min_messages</TT
+> (<TT
+CLASS="TYPE"
+>enum</TT
+>)</DT
+><DD
+><P
+>      Controls which message levels are written to the log. 
+      Valid values are <TT
+CLASS="LITERAL"
+>DEBUG</TT
+>, <TT
+CLASS="LITERAL"
+>DEBUG5</TT
+>, 
+      <TT
+CLASS="LITERAL"
+>DEBUG4</TT
+>, <TT
+CLASS="LITERAL"
+>DEBUG3</TT
+>, <TT
+CLASS="LITERAL"
+>DEBUG2</TT
+>, 
+      <TT
+CLASS="LITERAL"
+>DEBUG1</TT
+>, <TT
+CLASS="LITERAL"
+>INFO</TT
+>, <TT
+CLASS="LITERAL"
+>NOTICE</TT
+>, 
+      <TT
+CLASS="LITERAL"
+>WARNING</TT
+>, <TT
+CLASS="LITERAL"
+>ERROR</TT
+>, <TT
+CLASS="LITERAL"
+>LOG</TT
+>, 
+      <TT
+CLASS="LITERAL"
+>FATAL</TT
+> and <TT
+CLASS="LITERAL"
+>PANIC</TT
+>.  
+      Each level includes all the levels that follow it.   
+      The later the level, the fewer messages are sent.   
+      The default is <TT
+CLASS="LITERAL"
+>WARNING</TT
+>.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-OPT-NODENAME"
+></A
+><TT
+CLASS="VARNAME"
+>nodename</TT
+> (<TT
+CLASS="TYPE"
+>string</TT
+>)</DT
+><DD
+><P
+>      Specifies the name of this <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+> or <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+> standby.
+      There is no default value for this parameter.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-OPT-PORT"
+></A
+><TT
+CLASS="VARNAME"
+>port</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies the port number of <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+> or <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+> standby.
+      Default value is 6666.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-OPT-STARTUP"
+></A
+><TT
+CLASS="VARNAME"
+>startup</TT
+> (<TT
+CLASS="TYPE"
+>enum</TT
+>)</DT
+><DD
+><P
+>      Specifies the startup mode of this <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>.
+      Valied values are <TT
+CLASS="LITERAL"
+>act</TT
+> or <TT
+CLASS="LITERAL"
+>standby</TT
+>.
+      <TT
+CLASS="LITERAL"
+>act</TT
+> means to start up
+      this <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+> as usual so
+      that <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+> clients (Coordinators, data
+      nodes or gtm-proxies) can connect for transaction
+      management.  <TT
+CLASS="LITERAL"
+>standby</TT
+> means
+      this <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+> starts up as a backup
+      of <TT
+CLASS="LITERAL"
+>act</TT
+>
+      gtm.  <TT
+CLASS="LITERAL"
+>standby</TT
+> <TT
+CLASS="LITERAL"
+>gtm</TT
+> can be
+      promoted to <TT
+CLASS="LITERAL"
+>act</TT
+> when <TT
+CLASS="LITERAL"
+>act</TT
+>
+      fails.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-OPT-SYNCHRONOUS-BACKUP"
+></A
+><TT
+CLASS="VARNAME"
+>synchronous-backup</TT
+> (<TT
+CLASS="TYPE"
+>boolean</TT
+>)</DT
+><DD
+><P
+>      Specifies if backup to GTM-Standby is taken synchronously.   If this is turned on,
+      GTM will send and receive synchronize message to make sure that all the backups
+      reached to the standby.
+     </P
+><P
+>      If it is turned off, all the backup information will be sent without checking they
+      reached to GTM-Standby.
+     </P
+><P
+>      Default value is off.
+     </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN87391"
+></A
+><H2
+>Options</H2
+><P
+>   Options are specified with preceding '<TT
+CLASS="LITERAL"
+>-</TT
+>', each
+   option may be associated with a value. They can be specified
+   in <TT
+CLASS="LITERAL"
+>-o</TT
+> option of gtm_ctl(8).
+  </P
+><P
+>   Parameters specified as command line options override these specified in the configuration file described
+   in the previous section.
+  </P
+><P
+>   Options are as follows:
+  </P
+><P
+>   <P
+></P
+></P><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>D</TT
+></DT
+><DD
+><P
+>       Specify a directory which holds data for gtm or gtm_proxy
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>l</TT
+></DT
+><DD
+><P
+>       Specify a log file for gtm_ctl.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>x</TT
+></DT
+><DD
+><P
+>       Specify global transaction ID to start with. This is needed
+       when you start gtm for the first time
+       because <TT
+CLASS="COMMAND"
+>initdb</TT
+> consumes XID locally and gtm
+       should start to give GXID greater than the last one
+       each <TT
+CLASS="COMMAND"
+>initdb</TT
+> consumed locally. If gtm has
+       been shut down gracefully, then this value will be taken from
+       the last run.
+      </P
+><P
+>       If <TT
+CLASS="LITERAL"
+>-x</TT
+> option is not specified at the first
+       run, initial global transaction ID value will be set to a
+       default initial value which is considered to be safe enough (in
+       version 1.1.1, it is 10000).  If many statements are
+       involved in initdb, you should consider to specify larger
+       value.
+      </P
+><P
+>       To find the precise value to start with, you should
+       run <SPAN
+CLASS="APPLICATION"
+>pg_controldata</SPAN
+> to
+       find <TT
+CLASS="LITERAL"
+>Latest checkpoint's NextXID</TT
+> of all the
+       Coordinators and Datanodes and choose the value larger than or
+       equals to the maximum value found.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>h</TT
+></DT
+><DD
+><P
+>       Specify host name or IP address used.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>p</TT
+></DT
+><DD
+><P
+>       Specify port number to listen.
+      </P
+></DD
+></DL
+></DIV
+><P>
+  </P
+><P
+>    When starting GTM as a standby instance, following options can also be provided.
+  </P
+><P
+>   <P
+></P
+></P><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>s</TT
+></DT
+><DD
+><P
+>       Specify if GTM starts as a standby
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>i</TT
+></DT
+><DD
+><P
+>       Specify host name or IP address of active GTM instance to connect to
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>q</TT
+></DT
+><DD
+><P
+>       Specify port number of active GTM instance to connect to
+      </P
+></DD
+></DL
+></DIV
+><P>
+  </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="reference-server.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="app-gtm-proxy.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>PostgreSQL Server Applications</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="reference-server.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>gtm_proxy</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

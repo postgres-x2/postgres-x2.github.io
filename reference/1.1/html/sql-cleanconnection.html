@@ -1,0 +1,428 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>CLEAN CONNECTION</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.1.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="SQL Commands"
+HREF="sql-commands.html"><LINK
+REL="PREVIOUS"
+TITLE="CHECKPOINT"
+HREF="sql-checkpoint.html"><LINK
+REL="NEXT"
+TITLE="CLOSE"
+HREF="sql-close.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:47:50"></HEAD
+><BODY
+CLASS="REFENTRY"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.1.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="CHECKPOINT"
+HREF="sql-checkpoint.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="sql-commands.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="CLOSE"
+HREF="sql-close.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="SQL-CLEANCONNECTION"
+></A
+>CLEAN CONNECTION</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN66501"
+></A
+><H2
+>Name</H2
+>CLEAN CONNECTION&nbsp;--&nbsp;Clean up pooler connections in a cluster</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN66506"
+></A
+><H2
+>Synopsis</H2
+><PRE
+CLASS="SYNOPSIS"
+>CLEAN CONNECTION TO { COORDINATOR ( <TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+> [, ... ] ) | NODE ( <TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+> [, ... ] ) | ALL {FORCE} }
+    [ FOR DATABASE <TT
+CLASS="REPLACEABLE"
+><I
+>dbname</I
+></TT
+> ]
+    [ TO USER <TT
+CLASS="REPLACEABLE"
+><I
+>username</I
+></TT
+> ]</PRE
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN66512"
+></A
+><H2
+>Description</H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>   <TT
+CLASS="COMMAND"
+>CLEAN CONNECTION</TT
+> cleans pooler connection in
+   a Postgres-XC cluster.  This can be done for a give database or
+   role. This command usage is restricted to superusers.  It is
+   possible to clean connections to a list of Postgres-XC Coordinators
+   or Datanodes.  If TO ALL is specified, connections to all the nodes
+   are cleaned.  A <TT
+CLASS="REPLACEABLE"
+><I
+>username</I
+></TT
+>
+   or a <TT
+CLASS="REPLACEABLE"
+><I
+>dbname</I
+></TT
+> has to be
+   specified to perform <TT
+CLASS="COMMAND"
+>CLEAN CONNECTION</TT
+>.
+  </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN66522"
+></A
+><H2
+>Parameters</H2
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="LITERAL"
+>FORCE</TT
+></DT
+><DD
+><P
+>      It can only be specified with the clause <TT
+CLASS="LITERAL"
+>TO ALL</TT
+>.
+      If specified, all the backends connected to the specified node(s)
+      are closed by sending to them a signal SIGTERM.
+     </P
+></DD
+><DT
+><TT
+CLASS="REPLACEABLE"
+><I
+>dbname</I
+></TT
+></DT
+><DD
+><P
+>      If specified in the optional clause <TT
+CLASS="LITERAL"
+>FOR DATABASE</TT
+>,
+      pooler connections are cleaned for given database.
+     </P
+></DD
+><DT
+><TT
+CLASS="REPLACEABLE"
+><I
+>username</I
+></TT
+></DT
+><DD
+><P
+>      If specified in the optional clause <TT
+CLASS="LITERAL"
+>TO USER</TT
+>,
+      pooler connections are cleaned for given role.
+     </P
+></DD
+><DT
+><TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+></DT
+><DD
+><P
+>      In the case of cleaning connections to a given list of
+      Coordinator, <TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+>
+      has to be specified with the clause <TT
+CLASS="LITERAL"
+>TO COORDINATOR
+      </TT
+>.
+     </P
+><P
+>       In the case of cleaning connections to a given list of
+       Datanodes, <TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+>
+       has to be specified with the clause <TT
+CLASS="LITERAL"
+>TO NODE
+       </TT
+>.
+     </P
+><P
+>       <TT
+CLASS="REPLACEABLE"
+><I
+>num</I
+></TT
+> can contain
+       a list of nodes like in the query:
+
+</P><PRE
+CLASS="PROGRAMLISTING"
+>CLEAN CONNECTION TO COORDINATOR coord1,coord2 FOR DATABASE<TT
+CLASS="REPLACEABLE"
+><I
+>name</I
+></TT
+>;</PRE
+><P>
+       to clean connections to Coordinators coord1 and coord2.
+     </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN66557"
+></A
+><H2
+>Notes</H2
+><P
+>   <TT
+CLASS="COMMAND"
+>CLEAN CONNECTION</TT
+> is implemented since Postgres-XC
+   0.9.3.
+  </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN66561"
+></A
+><H2
+>Examples</H2
+><P
+>   Cleaning connection to Datanodes dn1 and dn2 for database template1:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>CLEAN CONNECTION TO NODE dn1,dn2 FOR DATABASE template1;</PRE
+><P>
+  </P
+><P
+>   Cleaning connection to Datanode dn3 for role postgres:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>CLEAN CONNECTION TO NODE dn3 TO USER postgres;</PRE
+><P>
+  </P
+><P
+>   Cleaning connection to all nodes on database postgres for
+   role admin and cut connections to backends.
+</P><PRE
+CLASS="PROGRAMLISTING"
+>CLEAN CONNECTION TO ALL FORCE FOR DATABASE postgres TO USER admin;</PRE
+><P>
+  </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN66569"
+></A
+><H2
+>Compatibility</H2
+><P
+>   <TT
+CLASS="COMMAND"
+>CLEAN CONNECTION</TT
+> does not conform to the <ACRONYM
+CLASS="ACRONYM"
+>   SQL</ACRONYM
+> standards, it is a Postgres-XC specific command.
+  </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="sql-checkpoint.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="sql-close.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>CHECKPOINT</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="sql-commands.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>CLOSE</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

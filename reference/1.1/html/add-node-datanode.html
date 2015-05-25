@@ -1,0 +1,291 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Adding a New Datanode</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.1.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Adding a New Node"
+HREF="add-node.html"><LINK
+REL="PREVIOUS"
+TITLE="Adding a New Coordinator"
+HREF="add-node-coordinator.html"><LINK
+REL="NEXT"
+TITLE="Removing an Existing Node"
+HREF="remove-node.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:47:50"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.1.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Adding a New Coordinator"
+HREF="add-node-coordinator.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="add-node.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 30. Adding a New Node</TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Removing an Existing Node"
+HREF="remove-node.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="ADD-NODE-DATANODE"
+>30.2. Adding a New Datanode</A
+></H1
+><P
+>    Following steps should be performed to add a new datanode to a running cluster:
+  </P
+><P
+>    <P
+></P
+></P><OL
+TYPE="1"
+><LI
+><P
+>          Initialize the new datanode. The following example initializes a new datanode named data_node_3.
+        </P
+><PRE
+CLASS="PROGRAMLISTING"
+>          /usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data3 --nodename data_node_3
+        </PRE
+></LI
+><LI
+><P
+>          Make the necessary changes in postgresql.conf of the new datanode, in particular specify new datanode name
+        </P
+></LI
+><LI
+><P
+>          Connect to any of the existing coordinators and lock the cluster for backup, do not close this session.
+          The following example assumes a coordinator is running on port 5432. Make sure the function call returns true.
+          The detailed description of the function <CODE
+CLASS="FUNCTION"
+>pgxc_lock_for_backup</CODE
+> can be found 
+          in <A
+HREF="functions-admin.html#FUNCTIONS-PGXC-ADD-NEW-NODE"
+>Table 9-68</A
+>
+        </P
+><PRE
+CLASS="PROGRAMLISTING"
+>          ./psql postgres -p 5432
+          select pgxc_lock_for_backup();
+        </PRE
+></LI
+><LI
+><P
+>          Connect to any of the existing datanodes and take backup of the database.
+          Please note that only schema (i.e. no data) is to be dumped.
+          The following example assumes that a datanode is running on port 15432.
+        </P
+><PRE
+CLASS="PROGRAMLISTING"
+>          ./pg_dumpall -p 15432 -s --file=/some/valid/path/some_file_name.sql
+        </PRE
+></LI
+><LI
+><P
+>          Start the new datanode specifying <TT
+CLASS="OPTION"
+>--restoremode</TT
+> while starting the it.
+          The following example starts the new datanode on port 35432.
+        </P
+><PRE
+CLASS="PROGRAMLISTING"
+>          ./postgres --restoremode -D ../data3 -p 35432
+        </PRE
+><P
+>	     You can use <TT
+CLASS="LITERAL"
+>pg_ctl</TT
+> with <TT
+CLASS="OPTION"
+>-Z restoremode</TT
+> option.
+	    </P
+><PRE
+CLASS="PROGRAMLISTING"
+>	     ./pg_ctl start -Z restoremode -D ../data3 -p 5455
+	    </PRE
+></LI
+><LI
+><P
+>          Restore the backup (taken in step 4) by connecting to the new datanode directly.
+        </P
+><PRE
+CLASS="PROGRAMLISTING"
+>          ./psql -d postgres -f /some/valid/path/some_file_name.sql -p 35432
+        </PRE
+></LI
+><LI
+><P
+>          Quit the new datanode.
+        </P
+></LI
+><LI
+><P
+>          Start the new datanode specifying --datanode while starting.
+        </P
+><PRE
+CLASS="PROGRAMLISTING"
+>          ./postgres --datanode -D ../data3 -p 35432
+        </PRE
+></LI
+><LI
+><P
+>          Create the new datanode on all the coordinators and reload configuration.
+          The following example creates data_node_3, with host localhost and port 35432.
+        </P
+><PRE
+CLASS="PROGRAMLISTING"
+>          CREATE NODE DATA_NODE_3 WITH (HOST = 'localhost', type = 'datanode', PORT = 35432);
+          SELECT pgxc_pool_reload();
+        </PRE
+></LI
+><LI
+><P
+>          Quit the session of step 3, this will unlock the cluster.
+        </P
+></LI
+><LI
+><P
+>          Redistribute existing data by using <TT
+CLASS="COMMAND"
+>ALTER TABLE REDISTRIBUTE</TT
+>. The new datanode is now ready.
+        </P
+></LI
+></OL
+><P>
+  </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="add-node-coordinator.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="remove-node.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Adding a New Coordinator</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="add-node.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Removing an Existing Node</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

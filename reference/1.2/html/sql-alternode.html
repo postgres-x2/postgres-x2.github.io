@@ -1,0 +1,506 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>ALTER NODE</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.2.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="SQL Commands"
+HREF="sql-commands.html"><LINK
+REL="PREVIOUS"
+TITLE="ALTER MATERIALIZED VIEW"
+HREF="sql-altermaterializedview.html"><LINK
+REL="NEXT"
+TITLE="ALTER OPERATOR"
+HREF="sql-alteroperator.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:40:50"></HEAD
+><BODY
+CLASS="REFENTRY"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.2.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="ALTER MATERIALIZED VIEW"
+HREF="sql-altermaterializedview.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="ALTER MATERIALIZED VIEW"
+HREF="sql-altermaterializedview.html"
+>Fast Backward</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="ALTER OPERATOR"
+HREF="sql-alteroperator.html"
+>Fast Forward</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="ALTER OPERATOR"
+HREF="sql-alteroperator.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="SQL-ALTERNODE"
+></A
+>ALTER NODE</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN71180"
+></A
+><H2
+>Name</H2
+>ALTER NODE&nbsp;--&nbsp;alter a cluster node</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN71185"
+></A
+><H2
+>Synopsis</H2
+><PRE
+CLASS="SYNOPSIS"
+>ALTER NODE <TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+> WITH
+  (
+    [ TYPE = <TT
+CLASS="REPLACEABLE"
+><I
+>nodetype</I
+></TT
+>,]
+    [ HOST = <TT
+CLASS="REPLACEABLE"
+><I
+>hostname</I
+></TT
+>,]
+    [ PORT = <TT
+CLASS="REPLACEABLE"
+><I
+>portnum</I
+></TT
+>,]
+    [ PRIMARY [ = <TT
+CLASS="REPLACEABLE"
+><I
+>boolean</I
+></TT
+>],]
+    [ PREFERRED [ = <TT
+CLASS="REPLACEABLE"
+><I
+>boolean</I
+></TT
+> ] ]
+  )&#13;</PRE
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN71193"
+></A
+><H2
+>Description</H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>XCONLY</I
+></SPAN
+>: The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>.</P
+></BLOCKQUOTE
+></DIV
+><P
+>   <TT
+CLASS="COMMAND"
+>ALTER NODE</TT
+> is new SQL query specific
+   to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> since 0.9.7 that modifies
+   cluster node information in catalog pgxc_node.
+  </P
+><P
+>   Node connection that has been modified does not guaranty that connection
+   information cached in pooler is updated accordingly.
+  </P
+><P
+>   <TT
+CLASS="COMMAND"
+>ALTER NODE</TT
+> only runs on the local node where it is launched.
+  </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN71205"
+></A
+><H2
+>Parameters</H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>XCONLY</I
+></SPAN
+>: The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>.</P
+></BLOCKQUOTE
+></DIV
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+></DT
+><DD
+><P
+>        The name of the selected cluster node.
+       </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>TYPE</TT
+></DT
+><DD
+><P
+>        The type of the cluster node. It is possible to specify
+        a Coordinator node or a Datanode node.
+       </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>PRIMARY</TT
+></DT
+><DD
+><P
+>        Defines if the cluster node is used as a primary node for replicated
+        write operations. A <TT
+CLASS="REPLACEABLE"
+><I
+>boolean</I
+></TT
+>
+        value can be specified. In case no value is specified, <TT
+CLASS="LITERAL"
+>PRIMARY</TT
+>
+        acts like <TT
+CLASS="LITERAL"
+>true</TT
+>.
+       </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>PREFERRED</TT
+></DT
+><DD
+><P
+>        Defines if the cluster node is used as a preferred node for replicated
+        read operations. A <TT
+CLASS="REPLACEABLE"
+><I
+>boolean</I
+></TT
+>
+        value can be specified. In case no value is specified, <TT
+CLASS="LITERAL"
+>PREFERRED</TT
+>
+        acts like <TT
+CLASS="LITERAL"
+>true</TT
+>.
+       </P
+></DD
+><DT
+><TT
+CLASS="REPLACEABLE"
+><I
+>nodetype</I
+></TT
+></DT
+><DD
+><P
+>        The node type for given cluster node. Possible values are:
+        'coordinator' for a Coordinator node and 'datanode' for a
+        Datanode node.
+       </P
+></DD
+><DT
+><TT
+CLASS="REPLACEABLE"
+><I
+>hostname</I
+></TT
+></DT
+><DD
+><P
+>        The hostname or IP used to connect to the cluster node.
+       </P
+></DD
+><DT
+><TT
+CLASS="REPLACEABLE"
+><I
+>portnum</I
+></TT
+></DT
+><DD
+><P
+>        The port number used to connect to the cluster node.
+       </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN71253"
+></A
+><H2
+>Notes</H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>XCONLY</I
+></SPAN
+>: The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>.</P
+></BLOCKQUOTE
+></DIV
+><P
+>    A Datanode can be modified as <TT
+CLASS="LITERAL"
+>PRIMARY</TT
+> and
+    as <TT
+CLASS="LITERAL"
+>PREFERRED</TT
+> as many times as necessary.
+  </P
+><P
+>    A node type cannot be modified.
+  </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN71263"
+></A
+><H2
+>Examples</H2
+><P
+>   Modify a Coordinator node located on local machine to use port 6543.
+</P><PRE
+CLASS="PROGRAMLISTING"
+>ALTER NODE coord_node WITH (PORT = 6543, HOST = 'localhost');</PRE
+><P>
+  </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN71267"
+></A
+><H2
+>Compatibility</H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>XCONLY</I
+></SPAN
+>: The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>.</P
+></BLOCKQUOTE
+></DIV
+><P
+>   <TT
+CLASS="COMMAND"
+>ALTER NODE</TT
+> does not conform to the <ACRONYM
+CLASS="ACRONYM"
+>   SQL</ACRONYM
+> standards, it is a Postgres-XC specific command.
+  </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="sql-altermaterializedview.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="sql-alteroperator.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>ALTER MATERIALIZED VIEW</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="sql-commands.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>ALTER OPERATOR</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

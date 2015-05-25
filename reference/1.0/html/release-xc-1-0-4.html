@@ -1,0 +1,345 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Release 1.0.4</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.0.4 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Release Notes"
+HREF="release.html"><LINK
+REL="PREVIOUS"
+TITLE="Release Notes"
+HREF="release.html"><LINK
+REL="NEXT"
+TITLE="Release 1.0.3"
+HREF="release-xc-1-0-3.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:50:53"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.0.4 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Release Notes"
+HREF="release.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Release Notes"
+HREF="release.html"
+>Fast Backward</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Appendix E. Release Notes</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Release Notes"
+HREF="release.html"
+>Fast Forward</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Release 1.0.3"
+HREF="release-xc-1-0-3.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="RELEASE-XC-1-0-4"
+>E.1. Release 1.0.4</A
+></H1
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Release Date: </B
+>2014-04-04</P
+></BLOCKQUOTE
+></DIV
+><P
+>   This release contains fixes in PostgreSQL up to 9.1.13, as well as a couple
+   of fixes in Postgres-XC.
+   For informations about new feature in the 1.0 major release, see
+   <A
+HREF="release-xc-1-0.html"
+>Section E.5</A
+>.
+   For information about fixes in the 1.0.1 and 1.0.2 minor releases, see
+   <A
+HREF="release-xc-1-0-1.html"
+>Section E.4</A
+> and <A
+HREF="release-xc-1-0-2.html"
+>Section E.3</A
+>
+   respectively.
+  </P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN110224"
+>E.1.1. Migrations to Version 1.0.4</A
+></H2
+><P
+>   A dump/restore is not required for those running 1.0.x.
+  </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN110227"
+>E.1.2. Changes</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>    Fixed a but that alter node and create node does not work together another drop node or alter node which
+	disables current primary node.   By Koichi Suzuki
+   </P
+></LI
+><LI
+><P
+>	Now TEMP object can be used within implicit 2PC transactions.
+	Regression test changes accordingly.
+	By Koichi Suzuki.
+   </P
+></LI
+><LI
+><P
+>	Improvement of statment cancellation behavior consisitent.
+	This reduces the chance of random failure in the regression test.
+	By Masataka Saito.
+   </P
+></LI
+><LI
+><P
+>	Fixes PGXC blocked by acquiring TwoPhaseStateLock.
+    Reported by ZhangJulian.
+   </P
+></LI
+><LI
+><P
+>	Fix for coordinator overshoot in COPY.
+	By Koichi Suzuki.
+   </P
+></LI
+><LI
+><P
+>	Fix an issue that GTM Proxy doesn't send status in response of COMMIT or ROLLBACK.
+	By Masataka Saito.
+   </P
+></LI
+><LI
+><P
+>	Fix an issue that a GTM Proxy sends MSG_BACKEND_DISCONNECT command with wrong proxy connection ID.
+	By Masataka Saito.
+   </P
+></LI
+><LI
+><P
+>	Fix the issue that a GTM Proxy sends error responses via unrelated connection.
+	By Masataka Saito.
+   </P
+></LI
+><LI
+><P
+>	Specify that EXECUTE DIRECT query needs to be a string literal.
+	By Tomonari Katsumata.
+   </P
+></LI
+><LI
+><P
+>	Replace strndup calls by strdup in makesgml.
+	By Michael Paquier.
+   </P
+></LI
+><LI
+><P
+>	Correct incorrect return results of GTM-Proxy code.
+	By Michael Paquier.
+   </P
+></LI
+><LI
+><P
+>	Fix ALTER SCHEMA bug when renaming dependent objects only occurs in
+	release 1.0.
+	Reported by Andrei Martsinchyk.
+	Fixed by Michael Paquier.
+   </P
+></LI
+><LI
+><P
+>	Fix message level when GTM master connects to GTM standby.
+	Reported by Nikhil Sontakke.
+	Fixed by Koichi Suzuki.
+   </P
+></LI
+><LI
+><P
+>	Fix of potential memory leak at GTM.
+	By Nikhil Sontakke.
+	Reviewed by Koichi Suzuki.
+   </P
+></LI
+><LI
+><P
+>	Fix GTM bug to craete more than 1024 sequences.
+	By Koichi Suzuki.
+   </P
+></LI
+><LI
+><P
+>	Fix initdb usage and error message Bug ID: 3614712.
+	By Masataka Saito.
+   </P
+></LI
+><LI
+><P
+>	Fix a documentation bug about CREATE NODE.
+	By Masataka Saito.
+   </P
+></LI
+><LI
+><P
+>	Fix GTM bug when GTM Proxy requested multiple GXIDs.
+	Reported and fixed by Nikhil Sontakke.
+   </P
+></LI
+><LI
+><P
+>	Fix disconnect handling at GTM proxy.
+	Reported and fixed by Andrei Martsinchyk.
+   </P
+></LI
+></UL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="release.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="release-xc-1-0-3.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Release Notes</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="release.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Release 1.0.3</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,513 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>gtm_ctl</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.1.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="PostgreSQL Server Applications"
+HREF="reference-server.html"><LINK
+REL="PREVIOUS"
+TITLE="gtm_proxy"
+HREF="app-gtm-proxy.html"><LINK
+REL="NEXT"
+TITLE="initdb"
+HREF="app-initdb.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:47:50"></HEAD
+><BODY
+CLASS="REFENTRY"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.1.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="gtm_proxy"
+HREF="app-gtm-proxy.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="reference-server.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="initdb"
+HREF="app-initdb.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="APP-GTM-CTL"
+></A
+>gtm_ctl</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN87750"
+></A
+><H2
+>Name</H2
+>gtm_ctl&nbsp;--&nbsp;   <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> GTM operation module
+  </DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN87756"
+></A
+><H2
+>Synopsis</H2
+><P
+><TT
+CLASS="COMMAND"
+>gtm_proxy</TT
+> [<TT
+CLASS="REPLACEABLE"
+><I
+>option</I
+></TT
+>...]</P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="R1-APP-GTM-CTL-1"
+></A
+><H2
+>   Description
+  </H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>   <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+> starts/stops <TT
+CLASS="COMMAND"
+>gtm</TT
+>
+   or <TT
+CLASS="COMMAND"
+>gtm_proxy</TT
+>. The options specify the GTM
+   configuration.
+  </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN87770"
+></A
+><H2
+>Options</H2
+><P
+>   Options are specified with preceding '<TT
+CLASS="LITERAL"
+>-</TT
+>', each
+   option may be associated with a value.
+  </P
+><P
+>   Options are as follows:
+  </P
+><P
+>   <P
+></P
+></P><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>D</TT
+></DT
+><DD
+><P
+>       Specify a directory which holds data
+       for <TT
+CLASS="COMMAND"
+>gtm</TT
+> or <TT
+CLASS="COMMAND"
+>gtm_proxy</TT
+>
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>l</TT
+></DT
+><DD
+><P
+>       Specify a log file for <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+>.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>m</TT
+></DT
+><DD
+><P
+>       Set mode.  Value can
+       be <TT
+CLASS="LITERAL"
+>smart</TT
+>, <TT
+CLASS="LITERAL"
+>fast</TT
+>
+       or <TT
+CLASS="LITERAL"
+>immediate</TT
+>.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>C</TT
+></DT
+><DD
+><P
+>       Specify alternte <TT
+CLASS="LITERAL"
+>gtm.control</TT
+> file used to setup
+	   the initial status of gtm.  Specify the file name as the value.
+	   File path is relative to the working directory of gtm.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>o</TT
+></DT
+><DD
+><P
+>       Option method. This parameter will be passed down
+       to <TT
+CLASS="COMMAND"
+>gtm</TT
+> or <TT
+CLASS="COMMAND"
+>gtm_proxy</TT
+>.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>p</TT
+></DT
+><DD
+><P
+>       Set up postgres bin repository.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>S</TT
+></DT
+><DD
+><P
+>       Specify which to start, gtm or gtm_proxy. The value can be
+       specified as <TT
+CLASS="LITERAL"
+>gtm</TT
+>
+       or <TT
+CLASS="LITERAL"
+>gtm_proxy</TT
+>.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>t</TT
+></DT
+><DD
+><P
+>       Specify the wait time in seconds.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>W</TT
+> or <TT
+CLASS="OPTION"
+>w</TT
+></DT
+><DD
+><P
+>       Wait option.
+      </P
+></DD
+></DL
+></DIV
+><P>
+  </P
+><P
+>   <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+> issues the following keywords to select
+   operations on <TT
+CLASS="COMMAND"
+>gtm</TT
+>
+   and <TT
+CLASS="COMMAND"
+>gtm_proxy</TT
+>.
+  </P
+><P
+>   <P
+></P
+></P><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>start</TT
+></DT
+><DD
+><P
+>       Start a GTM/GTM proxy instance.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>restart</TT
+></DT
+><DD
+><P
+>       Restart a GTM/GTM proxy instance.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>stop</TT
+></DT
+><DD
+><P
+>       Stop a GTM/GTM proxy instance.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>status</TT
+></DT
+><DD
+><P
+>       Look at the status of GTM instance. If active, 1 is printed. If
+       standby, 0 is printed.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>promote</TT
+></DT
+><DD
+><P
+>       Promote a GTM instance as active.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>reconnect</TT
+></DT
+><DD
+><P
+>       Reconnect a GTM Proxy to another GTM instance.
+      </P
+></DD
+></DL
+></DIV
+><P>
+  </P
+><P
+>   Typically, you can issue the following command to start <TT
+CLASS="COMMAND"
+>gtm</TT
+>/
+</P><PRE
+CLASS="PROGRAMLISTING"
+>gtm_ctl start -Z gtm -D datafolder</PRE
+><P>
+  </P
+><P
+>   Or <TT
+CLASS="COMMAND"
+>gtm_proxy</TT
+>:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>gtm_ctl start -Z gtm_proxy -D datafolder_proxy</PRE
+><P>
+  </P
+><P
+>   Promote a GTM as active:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>gtm_ctl promote -Z gtm -D datafolder</PRE
+><P>
+  </P
+><P
+>   Reconnect a GTM proxy to another GTM instance:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>gtm_ctl reconnect -Z gtm_proxy -D datafolder_proxy -o '-s hostname -t port_number'</PRE
+><P>
+  </P
+><P
+>   Look at the status of a GTM server:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>gtm_ctl status -Z gtm -D datafolder</PRE
+><P>
+  </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="app-gtm-proxy.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="app-initdb.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>gtm_proxy</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="reference-server.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>initdb</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

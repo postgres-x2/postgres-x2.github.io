@@ -1,0 +1,371 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>EXECUTE DIRECT</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.1.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="SQL Commands"
+HREF="sql-commands.html"><LINK
+REL="PREVIOUS"
+TITLE="EXECUTE"
+HREF="sql-execute.html"><LINK
+REL="NEXT"
+TITLE="EXPLAIN"
+HREF="sql-explain.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:47:50"></HEAD
+><BODY
+CLASS="REFENTRY"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.1.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="EXECUTE"
+HREF="sql-execute.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="sql-commands.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="EXPLAIN"
+HREF="sql-explain.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="SQL-EXECUTEDIRECT"
+></A
+>EXECUTE DIRECT</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN75793"
+></A
+><H2
+>Name</H2
+>EXECUTE DIRECT&nbsp;--&nbsp;Launch queries directly to dedicated nodes</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN75798"
+></A
+><H2
+>Synopsis</H2
+><PRE
+CLASS="SYNOPSIS"
+>EXECUTE DIRECT ON ( <TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+> [, ... ] )
+    <TT
+CLASS="REPLACEABLE"
+><I
+>query</I
+></TT
+></PRE
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN75802"
+></A
+><H2
+>Description</H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>   <TT
+CLASS="COMMAND"
+>EXECUTE DIRECT</TT
+> is a SQL query specially created
+   for Postgres-XC to allow to launch queries directly to dedicated
+   nodes determined by a list of nodes <TT
+CLASS="REPLACEABLE"
+><I
+>   nodelist</I
+></TT
+>. 
+  </P
+><P
+>   Since Postgres-XC 0.9.3, EXECUTE DIRECT is limited to used on 1 node
+   only. Besides, the query sent to remote nodes designed by a list of
+   <TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+> is limited to
+   <TT
+CLASS="LITERAL"
+>SELECT</TT
+> queries. The usage of transaction queries
+   (<TT
+CLASS="LITERAL"
+>BEGIN</TT
+>, <TT
+CLASS="LITERAL"
+>COMMIT</TT
+>...), DDL, and DML
+   (<TT
+CLASS="LITERAL"
+>INSERT</TT
+>, <TT
+CLASS="LITERAL"
+>UPDATE</TT
+>, <TT
+CLASS="LITERAL"
+>DELETE
+   </TT
+>) is forbidden to avoid data inconsistency among nodes
+   in the cluster. EXECUTE DIRECT usage is also limited to superusers.
+  </P
+><P
+>    Either Coordinator or Datanode can be selected by its node name.
+  </P
+><P
+>   <TT
+CLASS="COMMAND"
+>EXECUTE DIRECT</TT
+> allows the usage of the following utility commands
+   on remote nodes: <TT
+CLASS="COMMAND"
+>CREATE TABLESPACE</TT
+>, <TT
+CLASS="COMMAND"
+>DROP TABLESPACE</TT
+>.
+  </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN75823"
+></A
+><H2
+>Parameters</H2
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+></DT
+><DD
+><P
+>      This mandatory clause specifies the node name on where to launch
+      <TT
+CLASS="REPLACEABLE"
+><I
+>query</I
+></TT
+>. When specifying
+      multiple nodes, node names have to be separated by a comma.
+     </P
+></DD
+><DT
+><TT
+CLASS="REPLACEABLE"
+><I
+>query</I
+></TT
+></DT
+><DD
+><P
+>      This mandatory clause specifies the raw query to launch
+      on specified node list <TT
+CLASS="REPLACEABLE"
+><I
+>nodelist</I
+></TT
+>.
+      This must be specified as a string literal.
+     </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN75838"
+></A
+><H2
+>Examples</H2
+><P
+>   Select some data in a given table tenk1 on remote Datanode named dn1:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>EXECUTE DIRECT ON (dn1) 'SELECT * FROM tenk1 WHERE col_char = ''foo''';</PRE
+><P>
+  </P
+><P
+>   Select local timestamp of a remote node named coord2:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>EXECUTE DIRECT ON (coord2) 'select clock_timestamp()';</PRE
+><P>
+  </P
+><P
+>   Select list of tables of a remote node named dn50:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>EXECUTE DIRECT ON (dn50) 'select tablename from pg_tables';</PRE
+><P>
+  </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN75846"
+></A
+><H2
+>Compatibility</H2
+><P
+>   <TT
+CLASS="COMMAND"
+>EXECUTE DIRECT</TT
+> does not conform to the <ACRONYM
+CLASS="ACRONYM"
+>   SQL</ACRONYM
+> standards, it is a Postgres-XC specific command.
+  </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="sql-execute.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="sql-explain.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>EXECUTE</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="sql-commands.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>EXPLAIN</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

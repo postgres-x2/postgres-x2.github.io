@@ -1,0 +1,919 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Release 1.2.1</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.2.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Release Notes"
+HREF="release.html"><LINK
+REL="PREVIOUS"
+TITLE="Release Notes"
+HREF="release.html"><LINK
+REL="NEXT"
+TITLE="Release 1.1"
+HREF="release-xc-1-1.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:40:50"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.2.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Release Notes"
+HREF="release.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Release Notes"
+HREF="release.html"
+>Fast Backward</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Appendix E. Release Notes</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Release Notes"
+HREF="release.html"
+>Fast Forward</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Release 1.1"
+HREF="release-xc-1-1.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="RELEASE-XC-1-2-1"
+>E.1. Release 1.2.1</A
+></H1
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Release Date: </B
+>2014-03-28</P
+></BLOCKQUOTE
+></DIV
+><P
+>   This release contains new feature in and a variety of fixes in 1.2.1.
+  </P
+><P
+>   Because of several important fixes are applied just after 1.2.0 material was prepared, 
+   the first available GA of version 1.2 of <SPAN
+CLASS="APPLICATION"
+>Postgres-XC</SPAN
+> is 1.2.1.
+  </P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN126533"
+>E.1.1. Migration to Version 1.2.1</A
+></H2
+><P
+>    A dump/restore is required for those running 1.1.X or 1.0.x.
+   </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN126536"
+>E.1.2. Overview</A
+></H2
+><P
+>    Postgres-XC is a symmetric (multi-master, read and write-scalable) shared-nothing cluster 
+    based on <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>. 
+    This release version is based on <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> 9.3.
+   </P
+><P
+>    Currently the only architectures supported are 64 bit Linux operating systems.
+   </P
+><P
+>    This release of <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> is the third major release and 
+    contains the following features, characteristics and enhancements.
+   </P
+><P
+></P
+><UL
+><LI
+><P
+>      Support and extensions for existing features of PostgreSQL in a cluster-wide environment.
+     </P
+></LI
+><LI
+><P
+>      SQL extensions and functionalities exclusive to Postgres-XC for management and operations 
+      related to a cluster, which add a node-level granularity for cluster operations.
+     </P
+></LI
+><LI
+><P
+>      Creation of Global Transaction Manager (GTM), which is a centralized component 
+      providing cluster-wide Multi-version Concurrency Control (MVCC).
+     </P
+></LI
+><LI
+><P
+>      Creation of mechanisms exclusive to Postgres-XC and enhancements of existing 
+      internal mechanisms of PostgreSQL, which are related to connection pooling, 
+      global transaction management, query planning, rewriting, analyzing and execution.
+     </P
+></LI
+><LI
+><P
+>      Add/remove nodes while Postgres-XC cluster is in operation.
+     </P
+></LI
+><LI
+><P
+>      Basic Postgres-XC configuration and operation tool.
+     </P
+></LI
+><LI
+><P
+>      Restrictions related to existing features in PostgreSQL and currently 
+      not supported by Postgres-XC.
+     </P
+></LI
+></UL
+><P
+>    The above items are explained in more detail in the sections below.
+   </P
+><P
+>    The original overall architecture and design of Postgres-XC is by Koichi Suzuki, 
+    Mason Sharp, Pavan Deolasee, Andrei Martsinchyk and Michael Paquier. 
+    Koichi Suzuki is the original project lead.
+   </P
+><P
+>    Core member at the time of Version 1.2.1 released is Koichi Suzuki, Ashutosh Bapat, 
+    Ababs Butt, Ahsan Hadi, Masataka Saito, Tetsuo Sakata, 
+    Masaki Hisada and Hitoshi Hemmi.
+   </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN126562"
+>E.1.3. New Features</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>      New planner feature to handle sub-queries, by Ashutosh Bapat.
+     </P
+></LI
+><LI
+><P
+>      Materialized view was ported to XC, done by Ashutosh Bapat
+     </P
+></LI
+><LI
+><P
+>	  Event Trigger was ported to XC, done by Koichi Suzuki
+     </P
+></LI
+><LI
+><P
+>	  Automatic updatable views was ported to XC, done by Abbas But
+     </P
+></LI
+><LI
+><P
+>	  LATERAL was ported to XC, done by Ashutosh Bapat
+     </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN126575"
+>E.1.4. Improvements</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>      Additonal tests in xc_FQL regression. by Ashutosh Bapat.
+     </P
+></LI
+><LI
+><P
+>      Enabled TEMP objects in implicit 2PC transactions, by K.Suzuki.
+     </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN126582"
+>E.1.5. Interface changes</A
+></H2
+><P
+>	 There are no interface changes except for new features.
+	</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN126585"
+>E.1.6. Fixes</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>      Fix false report of partition column updation. By Abbas But.
+     </P
+></LI
+><LI
+><P
+>      Fix for alias problem in returning list of INSERT statements. By Abbas But.
+     </P
+></LI
+><LI
+><P
+>      Fix a problem in RETURNING support when all the items of the list and ont shipable. By Abbas But.
+     </P
+></LI
+><LI
+><P
+>       Change the way UPDATEs are handeled, 
+	   by updating all the columns of the result relation instead of
+	   updating only the columns that were in the target list.
+	   Needed to support automatic updatable views.
+	   By Abbas But.
+     </P
+></LI
+><LI
+><P
+>      Fix for all problems emerging because the query deparsing system now generates
+	  unique rtable names by appending digits. By Abbas But.
+     </P
+></LI
+><LI
+><P
+>      apn issue that GTM Proxy doesn't send status in response of COMMIT and ROLLBACK.
+	  By Masataka Saito.
+     </P
+></LI
+><LI
+><P
+>      Fix an issue that a GTM Proxy sends MSG_BACKEND_DISCONNECT command with
+	  wrong proxy connection ID. by Masataka Saito.
+     </P
+></LI
+><LI
+><P
+>      Fix the issue that a GTM Proxy sends error responses via unrelated connection.  
+	  By Masataka Saito.
+     </P
+></LI
+><LI
+><P
+>      Fix the bug 440, gtmProxySpecificExtraConfig does not work with pgxc_ctl, 
+	  by Koichi Suzuki
+     </P
+></LI
+><LI
+><P
+>      Fix makesgml to run at Solaris 10, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Correct GTM-Proxy code to build at Solaris 10, by Matt Warner.
+     </P
+></LI
+><LI
+><P
+>      Correct pgxc_ctl to build and run on more platforms including Mas OS-X,
+	  by Koichi Suzuki.
+     </P
+></LI
+><LI
+><P
+>      Change the level of some mesasge from GTM standby, by Koichi Suzuki.
+     </P
+></LI
+><LI
+><P
+>      Fix potential memory leak at GTM, by Nikhil Sontakke.
+     </P
+></LI
+><LI
+><P
+>      Allow GTM to create more than 1024 sequences, by Koichi Suzuki.
+     </P
+></LI
+><LI
+><P
+>      Fix initdb usage and error message bug, by Masataka Saito.
+     </P
+></LI
+><LI
+><P
+>      Fix GTM issue associated with multiple GXID request frm GTM Proxy,
+	  by Nikhil Sontakke.
+     </P
+></LI
+><LI
+><P
+>      Fix GTM proxy disconnect handling, by Andrei Martinchyk.
+     </P
+></LI
+><LI
+><P
+>      Fix of GTM proxy potential memory leak, by Andrei Martinchyk.
+     </P
+></LI
+><LI
+><P
+>      Fix of message level for BARRIER, by Koichi Suzuki.
+     </P
+></LI
+><LI
+><P
+>      GTM Slave configuration printout fix, by Mason Sharp.
+     </P
+></LI
+><LI
+><P
+>      Fix pgxc_ctl to elminate extra character generated by datanode_cmd.c (pgxc_ctl),
+	  by Mason Sharp.
+     </P
+></LI
+><LI
+><P
+>      Fix invalid gtm_ctl option generaged by gtm_cmd.c (pgxc_ctl),
+	  by Mason Sharp.
+     </P
+></LI
+><LI
+><P
+>      Fix incorrect gtm_proxy selection by datanode_cmd.c (pgxc_ctl),
+	  by Mason Sharp.
+     </P
+></LI
+><LI
+><P
+>      Fix of fast query shipping at pgxc_is_join_shippable(), by Ashutosh Bapat.
+     </P
+></LI
+><LI
+><P
+>      Fix GTM to close the control file, by Stefan Himpich.
+     </P
+></LI
+><LI
+><P
+>      Fix int4 regression by removing int4_1.out and add ORDER BY to some statements,
+	  by Koichi Suzuki.
+     </P
+></LI
+><LI
+><P
+>      Fix copy command buffere overflow, by Koichi Suzuki.
+     </P
+></LI
+><LI
+><P
+>      Fix incorrect statment with -k option in pgbench, by Tetsuo Sakata.
+     </P
+></LI
+><LI
+><P
+>      Fix master/slave configuretion in the coordinator, by Koichi Suzuki.
+     </P
+></LI
+><LI
+><P
+>      Fix data inconsistency caused by updating/deleting replicated tables, by Abbas But.
+     </P
+></LI
+><LI
+><P
+>      Fix incorrect query generation to datanodes where "AND" tokens are replaced by ",", by Masataka Saito.
+     </P
+></LI
+><LI
+><P
+>      Fix VPATH compilation failure, by Masataka Saito.
+     </P
+></LI
+><LI
+><P
+>      Fix GTM and GTM Proxy failure, by Masataka Saito.
+     </P
+></LI
+><LI
+><P
+>      Improve statement cancellation behavir consistent.   Reduce the chance of random failures in the regression test, by Masataka Saito.
+     </P
+></LI
+><LI
+><P
+>      Fix incorrect datanode statement creation with a case of subquery. By Abbas But.
+     </P
+></LI
+><LI
+><P
+>      Fixed internal node type identifier to be compatible with PostgreSQL 9.3.2 to provide better binary compatibility to
+	  <SPAN
+CLASS="APPLICATION"
+>PostgreSQL</SPAN
+> extensions.
+      Suggestion by Krzysztof Nienartowicz.
+     </P
+></LI
+><LI
+><P
+>      <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> improvement to add <TT
+CLASS="LITERAL"
+>-w</TT
+> option to <TT
+CLASS="LITERAL"
+>pg_ctl start</TT
+> command
+	  for better synchronization.  By Koichi Suzuki.  Reported by Masataka Saito.
+     </P
+></LI
+><LI
+><P
+>	  <TT
+CLASS="COMMAND"
+>ALTER NODE</TT
+> improvement while a coordinator is down or changed it's connection point by slave promotion.
+	  By Koichi Suzuki.   Analyzed by Masataka Saito.
+     </P
+></LI
+><LI
+><P
+>	  <TT
+CLASS="COMMAND"
+>pg_xlogdump</TT
+> now handles <TT
+CLASS="LITERAL"
+>BARRIER</TT
+> record correctly.
+	  By Wang Diancheng.
+     </P
+></LI
+><LI
+><P
+>	  Now <TT
+CLASS="COMMAND"
+>CREATE NODE</TT
+>, <TT
+CLASS="COMMAND"
+>ALTER NODE</TT
+> and <TT
+CLASS="COMMAND"
+>DROP NODE</TT
+> can be issued
+	  in a same session to change primary node configuration.
+	  By Koichi Suzui.
+     </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN126680"
+>E.1.7. Restrictions</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>  	  <TT
+CLASS="LITERAL"
+>UPDATE</TT
+> is performed based on CTID of each tuple.  This may affect replicated tables.
+	  This should be fixed by GA.
+     </P
+></LI
+><LI
+><P
+>      <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> 9.3 fixed a bug to check row update during firing of BEFORE ROW triggers.
+	  This bug is still open in <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="LITERAL"
+>SERIALIZABLE</TT
+> and <TT
+CLASS="LITERAL"
+>REPEATABLE READ</TT
+> transaction isolation modes are not supported.
+     </P
+></LI
+><LI
+><P
+>      Only constraints which can be enforced only locally to a datanode are supported.
+      For example, UNIQUE constraints for non-distribute column is not supported in distributed tables.
+     </P
+></LI
+><LI
+><P
+>      Using complicated statement in <TT
+CLASS="COMMAND"
+>PREPARE</TT
+> steatement may not 
+      be supported (depends upon specific statement). 
+     </P
+></LI
+><LI
+><P
+>      Row triggers do not work with <TT
+CLASS="COMMAND"
+>COPY</TT
+>.
+     </P
+></LI
+><LI
+><P
+>      Privilege to views may not work correctly.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="COMMAND"
+>COPY TO</TT
+> from replicated table does not work.
+     </P
+></LI
+><LI
+><P
+>      Quoted cast may not work.  For example, <TT
+CLASS="LITERAL"
+>select "my table".*::"my table" from "my table";</TT
+> 
+      does not work. Use <TT
+CLASS="LITERAL"
+>select row("my table".*) from "my table";</TT
+> instead.
+     </P
+></LI
+><LI
+><P
+>      SQL functions containing utility statement may not work.
+     </P
+></LI
+><LI
+><P
+>      DML cannot be used in plpgsql functions.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="COMMAND"
+>CREATE TABLE AS EXECUTE</TT
+> is not supported.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="COMMAND"
+>WHERE CURRENT OF</TT
+> is not supported.
+     </P
+></LI
+><LI
+><P
+>      In cursors, <TT
+CLASS="COMMAND"
+>MOVE BACKWARD</TT
+> works only if <TT
+CLASS="LITERAL"
+>SCROLL</TT
+> is used in the cursor.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="LITERAL"
+>WITH HOLD</TT
+> cursors are not supported.
+     </P
+></LI
+><LI
+><P
+>      Foreign Data Wrapper is not supported.  Following related SQL statements are not supported.  
+     </P
+><P
+>      <TT
+CLASS="COMMAND"
+>CREATE FOREIGN DATA WRAPPER</TT
+>, <TT
+CLASS="COMMAND"
+>ALTER FOREIGN DATA WRAPPER</TT
+>, 
+      <TT
+CLASS="COMMAND"
+>DROP FOREIGN DATA WRAPPER</TT
+>, 
+      <TT
+CLASS="COMMAND"
+>CREATE FOREIGN TABLE</TT
+>, <TT
+CLASS="COMMAND"
+>ALTER FOREIGN TABLE</TT
+>, 
+      <TT
+CLASS="COMMAND"
+>DROP FOREING TABLE</TT
+>, 
+      <TT
+CLASS="COMMAND"
+>CREATE SERVER</TT
+>, <TT
+CLASS="COMMAND"
+>ALTER SERVER</TT
+>, <TT
+CLASS="COMMAND"
+>DROP SERVER</TT
+>, 
+      <TT
+CLASS="COMMAND"
+>CREATE USER MAPPING</TT
+>, <TT
+CLASS="COMMAND"
+>ALTER USER MAPPING</TT
+>, 
+      <TT
+CLASS="COMMAND"
+>DROP USER MAPPING</TT
+>.
+     </P
+></LI
+><LI
+><P
+>      Savepoint is not supported.  Following related SQL statements are not supported.
+     </P
+><P
+>      <TT
+CLASS="COMMAND"
+>SAVEPOINT</TT
+>, <TT
+CLASS="COMMAND"
+>RELEASE SAVEPOINT</TT
+> 
+      and <TT
+CLASS="COMMAND"
+>ROLLBACK TO SAVEPOINT</TT
+>.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="COMMAND"
+>LISTEN</TT
+>, <TT
+CLASS="COMMAND"
+>UNLISTEN</TT
+> and <TT
+CLASS="COMMAND"
+>NOTIFY</TT
+> work only locally at a coordinator.
+     </P
+></LI
+><LI
+><P
+>      SECURITY LABEL is not supported.
+     </P
+></LI
+><LI
+><P
+>      Exception block in plpgsql is not available because SAVEPOINT is not supported.
+     </P
+></LI
+><LI
+><P
+>      Distribution key of a table cannot be updated.
+     </P
+></LI
+><LI
+><P
+>      Statistics are not collected globally.   These statistic data are maintained locally to each node.
+     </P
+></LI
+><LI
+><P
+>      BARRIERs do not have timeout, meaning if a 2PC transaction is stuck forever, barrier will be stuck too.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="COMMAND"
+>CREATE TABLE SELECT</TT
+> statement will cause error 
+      if <TT
+CLASS="COMMAND"
+>SELECT</TT
+> statement involves aggregate functions 
+      such that its transition function returns different type of row from the final row.
+     </P
+></LI
+><LI
+><P
+>      When a replication table does not have a primary key and the plan has no key other than CTID, the statement will fail.
+	  To fix this, add a primary key.
+     </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN126770"
+>E.1.8. Issues</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>      Regression test may have random failure. 
+	  This happens when statment cancelation takes longer than the next statment reaches
+	  the backend.
+      You can run the regression again to see if the test is successful.
+     </P
+></LI
+></UL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="release.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="release-xc-1-1.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Release Notes</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="release.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Release 1.1</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

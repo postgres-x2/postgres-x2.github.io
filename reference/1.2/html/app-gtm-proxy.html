@@ -1,0 +1,887 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>gtm_proxy</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.2.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Postgres-XC Server Applications"
+HREF="reference-server.html"><LINK
+REL="PREVIOUS"
+TITLE="gtm"
+HREF="app-gtm.html"><LINK
+REL="NEXT"
+TITLE="gtm_ctl"
+HREF="app-gtm-ctl.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:40:50"></HEAD
+><BODY
+CLASS="REFENTRY"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.2.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="gtm"
+HREF="app-gtm.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="gtm"
+HREF="app-gtm.html"
+>Fast Backward</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="gtm_ctl"
+HREF="app-gtm-ctl.html"
+>Fast Forward</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="gtm_ctl"
+HREF="app-gtm-ctl.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="APP-GTM-PROXY"
+></A
+>gtm_proxy</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN99280"
+></A
+><H2
+>Name</H2
+>gtm_proxy&nbsp;--&nbsp;   Proxy to <TT
+CLASS="COMMAND"
+>gtm</TT
+>, <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> Global Transaction Manager
+  </DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN99287"
+></A
+><H2
+>Synopsis</H2
+><P
+><TT
+CLASS="COMMAND"
+>gtm_proxy</TT
+> [<TT
+CLASS="REPLACEABLE"
+><I
+>option</I
+></TT
+>...]</P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="R1-APP-GTM-PROXY-1"
+></A
+><H2
+>   Description
+  </H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>XCONLY</I
+></SPAN
+>: The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>.</P
+></BLOCKQUOTE
+></DIV
+><P
+>   Gtm proxy provides proxy feature from Postgres-XC Coordinator and
+   Datanode to gtm. Gtm proxy groups connections and interactions
+   between gtm and other Postgres-XC components to reduce both the
+   number of interactions and the size of messages.
+  </P
+><P
+>   It is highly advised to start and stop gtm_proxy with gtm_ctl(8).
+  </P
+><P
+>   You must provide gtm configuration
+   file <TT
+CLASS="FILENAME"
+>gtm_proxy.conf</TT
+> placed at gtm working directory
+   as specified by <TT
+CLASS="LITERAL"
+>-D</TT
+> command line option.  The
+   configuration file specifies gtm running environment and resources.
+  </P
+><P
+>   Some of the parameters specified in the control file can be overridden by 
+   command line options.
+  </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN99304"
+></A
+><H2
+>Configuration File</H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>XCONLY</I
+></SPAN
+>: The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>.</P
+></BLOCKQUOTE
+></DIV
+><P
+>   <TT
+CLASS="LITERAL"
+>GTM-Proxy</TT
+> configuration parameters are specified in the configuration file
+   <TT
+CLASS="FILENAME"
+>gtm_proxy.conf</TT
+> placed in the working directory
+   specified as <TT
+CLASS="LITERAL"
+>-D</TT
+> option
+   of <SPAN
+CLASS="APPLICATION"
+>gtm_proxy</SPAN
+> command line option as described
+   in the next section.
+  </P
+><P
+>   Format of the configuration file is the same as <TT
+CLASS="FILENAME"
+>postgresql.conf</TT
+>.
+   Options are as follows.
+  </P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><A
+NAME="GTM-PROXY-OPT-ERR-WAIT-COUNT"
+></A
+><TT
+CLASS="VARNAME"
+>err_wait_count</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies how many times GTM-Proxy detects reconnect command from <SPAN
+CLASS="APPLICATION"
+>gtm_ctl</SPAN
+>
+      when communication error with GTM is detected.
+      Default value is zero.
+      Refer to <TT
+CLASS="VARNAME"
+>err_wait_idle</TT
+> and <TT
+CLASS="VARNAME"
+>err_wait_interval</TT
+>.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-ERR-WAIT-IDLE"
+></A
+><TT
+CLASS="VARNAME"
+>err_wait_idle</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies how long in second GTM-Proxy waits before it begin to detect reconnect
+      from <SPAN
+CLASS="APPLICATION"
+>gtm_ctl</SPAN
+>
+      when communication error with GTM is detected.
+      Default value is zero.
+      Refer to <TT
+CLASS="VARNAME"
+>err_wait_count</TT
+> and <TT
+CLASS="VARNAME"
+>err_wait_interval</TT
+>.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-ERR-WAIT-INTERVAL"
+></A
+><TT
+CLASS="VARNAME"
+>err_wait_interval</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies how long in second GTM-Proxy waits between each detection of reconnect
+      from <SPAN
+CLASS="APPLICATION"
+>gtm_ctl</SPAN
+>
+      when communication error with GTM is detected.
+      Default value is zero.
+      Refer to <TT
+CLASS="VARNAME"
+>err_wait_count</TT
+> and <TT
+CLASS="VARNAME"
+>err_wait_idle</TT
+>.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-GTM-CONNECT-RETRY-COUNT"
+></A
+><TT
+CLASS="VARNAME"
+>gtm_connect_retry_count</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies how many times GTM-Proxy retries to connect to GTM
+      when communication error with GTM is detected.
+      Default value is zero.
+      Refer to <TT
+CLASS="VARNAME"
+>gtm_connect_retry_idle</TT
+> and <TT
+CLASS="VARNAME"
+>gtm_connect_retry_interval</TT
+>.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-GTM-CONNECT-RETRY-IDLE"
+></A
+><TT
+CLASS="VARNAME"
+>gtm_connect_retry_idle</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies how long in second GTM-Proxy waits before it retries to connect to GTM when
+      communication error with GTM is detected.
+      Default value is zero.
+      Refer to <TT
+CLASS="VARNAME"
+>gtm_connect_retry_count</TT
+> and <TT
+CLASS="VARNAME"
+>gtm_connect_retry_interval</TT
+>.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-GTM-CONNECT-RETRY-INTERVAL"
+></A
+><TT
+CLASS="VARNAME"
+>gtm_connect_retry_interval</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies how log in second GTM-Proxy waits between each retry to connect to GTM when
+      communication error with GTM is detected.
+      Default value is zero.
+      Refer to <TT
+CLASS="VARNAME"
+>gtm_connect_retry_count</TT
+> and <TT
+CLASS="VARNAME"
+>gtm_connect_retry_idle</TT
+>.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-GTM-HOST"
+></A
+><TT
+CLASS="VARNAME"
+>gtm_host</TT
+> (<TT
+CLASS="TYPE"
+>string</TT
+>)</DT
+><DD
+><P
+>      Specifies listen addresses (host name or IP address) of <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>.
+      There is no default value for this parameter.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-GTM-PORT"
+></A
+><TT
+CLASS="VARNAME"
+>gtm_port</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies the port number of <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>.
+      There is no default value for this parameter.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-KEEPALIVES-COUNT"
+></A
+><TT
+CLASS="VARNAME"
+>keepalives_count</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies <TT
+CLASS="LITERAL"
+>keepalives_count</TT
+> option for the
+      connection to <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>.
+      Default value is zero and keepalives feature is disabled.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-KEEPALIVES-IDLE"
+></A
+><TT
+CLASS="VARNAME"
+>keepalives_idle</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies <TT
+CLASS="LITERAL"
+>keepalives_idle</TT
+> option for the
+      connection to <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>.
+      Default value is zero and keepalives feature is disabled.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-KEEPALIVES-INTERVAL"
+></A
+><TT
+CLASS="VARNAME"
+>keepalives_interval</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies <TT
+CLASS="LITERAL"
+>keepalives_interval</TT
+> option for the
+      connection to <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>.
+      Default value is zero and keepalives feature is disabled.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-LOG-FILE"
+></A
+><TT
+CLASS="VARNAME"
+>log_file</TT
+> (<TT
+CLASS="TYPE"
+>string</TT
+>)</DT
+><DD
+><P
+>      Specifies <TT
+CLASS="FILENAME"
+>log</TT
+> file name.  This file will be
+      created at the working directory of
+      this <SPAN
+CLASS="APPLICATION"
+>gtm_proxy</SPAN
+> as specified
+      by <TT
+CLASS="LITERAL"
+>-D</TT
+> command line option.
+      The default is <TT
+CLASS="FILENAME"
+>gtm_proxy.log</TT
+>.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-LOG-MIN-MESSAGES"
+></A
+><TT
+CLASS="VARNAME"
+>log_min_messages</TT
+> (<TT
+CLASS="TYPE"
+>enum</TT
+>)</DT
+><DD
+><P
+>      Controls which message levels are written to the log.
+      Valid values are <TT
+CLASS="LITERAL"
+>DEBUG</TT
+>, <TT
+CLASS="LITERAL"
+>DEBUG5</TT
+>,
+      <TT
+CLASS="LITERAL"
+>DEBUG4</TT
+>, <TT
+CLASS="LITERAL"
+>DEBUG3</TT
+>, <TT
+CLASS="LITERAL"
+>DEBUG2</TT
+>,
+      <TT
+CLASS="LITERAL"
+>DEBUG1</TT
+>, <TT
+CLASS="LITERAL"
+>INFO</TT
+>, <TT
+CLASS="LITERAL"
+>NOTICE</TT
+>,
+      <TT
+CLASS="LITERAL"
+>WARNING</TT
+>, <TT
+CLASS="LITERAL"
+>ERROR</TT
+>, <TT
+CLASS="LITERAL"
+>LOG</TT
+>,
+      <TT
+CLASS="LITERAL"
+>FATAL</TT
+> and <TT
+CLASS="LITERAL"
+>PANIC</TT
+>.
+      Each level includes all the levels that follow it.
+      The later the level, the fewer messages are sent.
+      The default is <TT
+CLASS="LITERAL"
+>WARNING</TT
+>.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-LISTEN-ADDRESSES"
+></A
+><TT
+CLASS="VARNAME"
+>listen_addresses</TT
+> (<TT
+CLASS="TYPE"
+>string</TT
+>)</DT
+><DD
+><P
+>      Specifies listen addresses (host name or IP address) of
+      this <SPAN
+CLASS="APPLICATION"
+>gtm_proxy</SPAN
+>.
+      Default value is '*'.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-NODENAME"
+></A
+><TT
+CLASS="VARNAME"
+>nodename</TT
+> (<TT
+CLASS="TYPE"
+>string</TT
+>)</DT
+><DD
+><P
+>      Specifies the name of this <SPAN
+CLASS="APPLICATION"
+>gtm_proxy</SPAN
+>.
+      There is no default value for this parameter.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-PORT"
+></A
+><TT
+CLASS="VARNAME"
+>port</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies the port number of this <SPAN
+CLASS="APPLICATION"
+>gtm_proxy</SPAN
+>.
+      Default port value is 6666.
+     </P
+></DD
+><DT
+><A
+NAME="GTM-PROXY-OPT-WORKER-THREADS"
+></A
+><TT
+CLASS="VARNAME"
+>worker_threads</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>      Specifies the number of worker threads for this <TT
+CLASS="LITERAL"
+>gtm_proxy</TT
+>.
+      Default value is 1.
+     </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN99521"
+></A
+><H2
+>Options</H2
+><P
+>   Options are specified with preceding '<TT
+CLASS="LITERAL"
+>-</TT
+>', each
+   option may be associated with a value. They can be specified
+   in <TT
+CLASS="LITERAL"
+>-o</TT
+> option of gtm_ctl(8).
+  </P
+><P
+>   Options are as follows:
+  </P
+><P
+>   <P
+></P
+></P><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>D</TT
+></DT
+><DD
+><P
+>       Specify a directory which holds data for <TT
+CLASS="COMMAND"
+>gtm_proxy</TT
+>
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>l</TT
+></DT
+><DD
+><P
+>       Specify a log file for <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+>.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>h</TT
+></DT
+><DD
+><P
+>       Specify host name or IP address used by the <TT
+CLASS="COMMAND"
+>gtm_proxy</TT
+>.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>p</TT
+></DT
+><DD
+><P
+>       Specify port number to listen.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>i</TT
+></DT
+><DD
+><P
+>       Specify gtm_proxy id, which is registered to gtm.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>n</TT
+></DT
+><DD
+><P
+>       Specify number of worker threads of gtm_proxy.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>s</TT
+></DT
+><DD
+><P
+>       Specify host name or IP address of target gtm.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>t</TT
+></DT
+><DD
+><P
+>       Specify port number of target gtm.
+      </P
+></DD
+></DL
+></DIV
+><P>
+  </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="app-gtm.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="app-gtm-ctl.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>gtm</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="reference-server.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>gtm_ctl</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

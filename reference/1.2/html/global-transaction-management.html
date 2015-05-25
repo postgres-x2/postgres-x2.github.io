@@ -1,0 +1,277 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Postgres-XC's Global Transaction Management</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.2.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Concurrency Control"
+HREF="mvcc.html"><LINK
+REL="PREVIOUS"
+TITLE="Locking and Indexes"
+HREF="locking-indexes.html"><LINK
+REL="NEXT"
+TITLE="Performance Tips"
+HREF="performance-tips.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:40:50"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.2.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Locking and Indexes"
+HREF="locking-indexes.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Concurrency Control"
+HREF="mvcc.html"
+>Fast Backward</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 13. Concurrency Control</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Concurrency Control"
+HREF="mvcc.html"
+>Fast Forward</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Performance Tips"
+HREF="performance-tips.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="GLOBAL-TRANSACTION-MANAGEMENT"
+>13.6. <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>'s Global Transaction Management</A
+></H1
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>XCONLY</I
+></SPAN
+>: The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>.</P
+></BLOCKQUOTE
+></DIV
+><P
+>    The above sections
+    described <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>'s concurrency
+    control and MVCC common to <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>.
+    This section describes how <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>
+    implements global concurrency control and MVCC among multiple
+    Coordinators and Datanodes.
+   </P
+><P
+>    In conventional replication clusters, you can run read
+    transactions in parallel in multiple standby, or slave
+    servers. Replication servers provide read scalability. However,
+    you cannot issue write transactions to standby servers because
+    they don't have means to propagate changes safely. They cannot
+    maintain consistent view of database to applications for write
+    operations, unless you issue write transactions to single master
+    server.
+   </P
+><P
+>    Postgres-XC is different.
+   </P
+><P
+>    As described
+    in <A
+HREF="intro-whatis.html"
+>Section </A
+>, <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>
+    is composed of GTM (Global Transaction Manager), Coordinators and
+    Datanodes.
+   </P
+><P
+>    In <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>, any Coordinator can
+    accept any transaction, regardless whether it is read only or
+    read/write.  Transaction integrity is enforced by GTM (global
+    transaction manager).  Because we have multiple Coordinators, each
+    of them can handle incoming transactions and statements in
+    parallel.
+   </P
+><P
+>    Analyzed statements are converted into internal plans, which
+    include SQL statements targeted to Datanodes.  They're proxied to
+    each target Datanode, handled and the result will be sent back to
+    originating Coordinator where all the results from target
+    Datanodes will be combined into the result to be sent back to the
+    application.
+   </P
+><P
+>    Each table can be distributed or replicated as described
+    in <A
+HREF="intro-whatis.html"
+>Section </A
+>.  If you design each table's
+    distribution carefully, most of the statements may need to target
+    to just one Datanode.  In this way, Coordinators and Datanodes
+    runs transactions in parallel which scales out both read and write
+    operations.
+   </P
+><P
+>    More detailed internals
+    about <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>'s transaction
+    management will be found in <A
+HREF="overview.html"
+>Chapter 45</A
+>.
+   </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="locking-indexes.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="performance-tips.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Locking and Indexes</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="mvcc.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Performance Tips</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

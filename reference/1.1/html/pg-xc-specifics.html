@@ -1,0 +1,442 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Postgres-XC Specific Parameters</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.1.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Coordinator and Datanode Configuration"
+HREF="runtime-config.html"><LINK
+REL="PREVIOUS"
+TITLE="Developer Options"
+HREF="runtime-config-developer.html"><LINK
+REL="NEXT"
+TITLE="Short Options"
+HREF="runtime-config-short.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:47:50"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.1.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Developer Options"
+HREF="runtime-config-developer.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="runtime-config.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 17. Coordinator and Datanode Configuration</TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Short Options"
+HREF="runtime-config-short.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="PG-XC-SPECIFICS"
+>17.18. Postgres-XC Specific Parameters</A
+></H1
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>    Because <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> distribute data into multiple
+    Datanodes and multiple Coordinators can accept transactions in
+    parallel, specific Coordinator must know what Coordinators and
+    Datanodes to connect.  Coordinator and Datanode also must know
+    where they can request transaction information.  The following
+    describes these additional GUC parameters.
+   </P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><A
+NAME="GUC-MAX-POOL-SIZE"
+></A
+><TT
+CLASS="VARNAME"
+>max_pool_size</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>        Specify the maximum connection pool of the Coordinator to Datanodes.
+        Because each transaction can be involved by all the Datanodes,
+        this parameter should at least be <TT
+CLASS="VARNAME"
+>max_connections</TT
+>
+        multiplied by number of Datanodes.
+       </P
+></DD
+><DT
+><A
+NAME="GUC-MIN-POOL-SIZE"
+></A
+><TT
+CLASS="VARNAME"
+>min_pool_size</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>        Minimum number of the connection from the Coordinator to
+        Datanodes.
+       </P
+></DD
+><DT
+><A
+NAME="GUC-MAX-COORDINATORS"
+></A
+><TT
+CLASS="VARNAME"
+>max_coordinators</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>        Maximum number of Coordinators that can be configured in the cluster.
+       </P
+></DD
+><DT
+><A
+NAME="GUC-MAX-DATANODES"
+></A
+><TT
+CLASS="VARNAME"
+>max_datanodes</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>        Maximum number of Datanodes that can be configured in the cluster.
+       </P
+></DD
+><DT
+><A
+NAME="GUC-PGXC-NODE-NAME"
+></A
+><TT
+CLASS="VARNAME"
+>pgxc_node_name</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>        Specifies the node name. A node uses this parameter to identify itself
+        with <A
+HREF="catalog-pgxc-node.html"
+><TT
+CLASS="STRUCTNAME"
+>pgxc_node</TT
+>
+        </A
+>.nodename
+       </P
+></DD
+><DT
+><A
+NAME="GUC-POOLER-PORT"
+></A
+><TT
+CLASS="VARNAME"
+>pooler_port</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>        Reports the port number assigned to the connection pooler.
+       </P
+></DD
+><DT
+><A
+NAME="GUC-GTM-HOST"
+></A
+><TT
+CLASS="VARNAME"
+>gtm_host</TT
+> (<TT
+CLASS="TYPE"
+>string</TT
+>)</DT
+><DD
+><P
+>        Reports the name or IP address of the <TT
+CLASS="FILENAME"
+>GTM</TT
+>.  If you use <TT
+CLASS="FILENAME"
+>GTM-Proxy</TT
+>, specify the <TT
+CLASS="FILENAME"
+>GTM-Proxy</TT
+>'s one.
+       </P
+></DD
+><DT
+><A
+NAME="GUC-GTM-PORT"
+></A
+><TT
+CLASS="VARNAME"
+>gtm_port</TT
+> (<TT
+CLASS="TYPE"
+>integer</TT
+>)</DT
+><DD
+><P
+>        Reports the port number of GTM.
+       </P
+></DD
+><DT
+><A
+NAME="GTM-BACKUP-BARRIER"
+></A
+><TT
+CLASS="VARNAME"
+>gtm_backup_barrier</TT
+> (<TT
+CLASS="TYPE"
+>string</TT
+>)</DT
+><DD
+><P
+>        Specify if GTM backs up the restart point for each barrier.
+        Default value is "OFF".
+        Superuser may set this variable by SET command, or this can be set in the file
+        <TT
+CLASS="FILENAME"
+>postgresql.conf</TT
+> file.
+       </P
+></DD
+><DT
+><A
+NAME="GUC-ENFORCE-TWO-PHASE-COMMIT"
+></A
+><TT
+CLASS="VARNAME"
+>enforce_two_phase_commit</TT
+> (<TT
+CLASS="TYPE"
+>boolean</TT
+>)</DT
+><DD
+><P
+>        Enforce the usage of two-phase commit instead for transactions involving temporary
+        objects or ON COMMIT actions.
+       </P
+></DD
+><DT
+><A
+NAME="GUC-XC-MAINTENANCE-MODE"
+></A
+><TT
+CLASS="VARNAME"
+>xc_maintenance_mode</TT
+> (<TT
+CLASS="TYPE"
+>bool</TT
+>)</DT
+><DD
+><P
+>        Specify to enter into maintenance mode. Turning this parameter to on will
+        change behavior of several statements. Each statement
+        behavior may not be compatible in future releases, so users
+        must be extremely careful when they attempt to set this
+        value to <TT
+CLASS="LITERAL"
+>on</TT
+>.
+       </P
+><P
+>        Behavior of <A
+HREF="sql-commit-prepared.html"
+>COMMIT PREPARED</A
+> and
+        <A
+HREF="sql-rollback-prepared.html"
+>ROLLBACK PREPARED</A
+> statements are affected by
+        this parameter.
+       </P
+><P
+>        If this is set to ON, you can do many other maintenance work to update
+        Datanode locally through <TT
+CLASS="LITERAL"
+>EXECUTE DIRECT</TT
+> or connecting
+        directly to Datanodes. As a DBA, you are totally responsible to any side
+        effects. You must be extremely careful not to bring in any inconsistencies
+        to Postgres-XC database cluster.
+       </P
+><P
+>        This parameter can only be set by superuser
+        with <TT
+CLASS="LITERAL"
+>SET</TT
+> command. Otherwise, the setting
+        will be ignored.
+       </P
+><P
+>        As a session parameter, this parameter is shared among all
+        the connections of the session. It affects originating Coordinator as
+        well as remote nodes involved in session.
+       </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="runtime-config-developer.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="runtime-config-short.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Developer Options</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="runtime-config.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Short Options</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

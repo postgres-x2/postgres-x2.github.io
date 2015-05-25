@@ -1,0 +1,1165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Starting Postgres-XC Cluster</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.0.4 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Server Setup and Operation"
+HREF="runtime.html"><LINK
+REL="PREVIOUS"
+TITLE="Creating a Database Cluster"
+HREF="creating-cluster.html"><LINK
+REL="NEXT"
+TITLE="Managing Kernel Resources"
+HREF="kernel-resources.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:50:53"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.0.4 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Creating a Database Cluster"
+HREF="creating-cluster.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Server Setup and Operation"
+HREF="runtime.html"
+>Fast Backward</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 16. Server Setup and Operation</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Server Setup and Operation"
+HREF="runtime.html"
+>Fast Forward</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Managing Kernel Resources"
+HREF="kernel-resources.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="SERVER-START"
+>16.3. Starting Postgres-XC Cluster</A
+></H1
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>   Before anyone can access <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>
+   (or <SPAN
+CLASS="PRODUCTNAME"
+>XC</SPAN
+> in short) database, you must
+   start <SPAN
+CLASS="PRODUCTNAME"
+>XC</SPAN
+> database cluster.
+   As described in the previous chapter, <SPAN
+CLASS="PRODUCTNAME"
+>XC</SPAN
+> consists of
+   various components. 
+   Minimum set of components are GTM, GTM-Proxy, Coordinator and
+   Datanode.
+   You must configure and start each of them.
+   Following sections will give you how to configure and start them.   
+   <TT
+CLASS="FILENAME"
+>pgxc_clean</TT
+> and <TT
+CLASS="FILENAME"
+>GTM-Standby</TT
+> are described in high-availability
+   sections.
+  </P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="CREATING-DATABASES"
+>16.3.1. Creating Databases</A
+></H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>    You should initialize each database which
+    composes <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> database cluster system. 
+    Both Coordinator and Datanode has its own database and you should
+    initialize these database.
+    Coordinator holds just database catalog and temporary data store.  
+    Datanode holds most of your data.  
+    First of all, you should determine how many Coordinators/Datanodes
+    to run and where they should run. 
+    It is a good convention that you run a Coordinator where you run a
+    Datanode.   
+    In this case, you should run <TT
+CLASS="FILENAME"
+>GTM-Proxy</TT
+> on the same
+    server too. 
+    It simplifies <SPAN
+CLASS="PRODUCTNAME"
+>XC</SPAN
+> configuration and help to make
+    workload of each servers even.
+   </P
+><P
+>    Both Coordinator and Datanode have their
+    own databases, essentially <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> databases.
+    They are separate and you should initialize them separately.
+   </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="GTM-START"
+>16.3.2. Starting GTM</A
+></H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>    GTM provides global transaction management feature to all the
+    other components in <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> database cluster.
+    Because GTM handles transaction requirements from all
+    the Coordinators and Datanodes, it is highly advised to run this
+    in a separate server.
+   </P
+><P
+>   Before you start GTM, you should decide followings:
+  </P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+>Where to run GTM</DT
+><DD
+><P
+>     Because GTM receives all the request to begin/end
+     transactions and to refer to sequence values, you should
+     run GTM in a separate server.  If you
+     run GTM in the same server as Datanode or
+     Coordinator, it will become harder to make workload reasonably
+     balanced.
+    </P
+><P
+>     Then, you should determine GTM's working directory.
+     Please create this directory before you run GTM.
+    </P
+></DD
+><DT
+>Listen address and port of GTM</DT
+><DD
+><P
+>     Next, you should determine listen address and port
+     of GTM.
+     Listen address can be either the IP address or host name which
+     receives request from other component,
+     typically <TT
+CLASS="FILENAME"
+>GTM-Proxy</TT
+>.
+    </P
+></DD
+><DT
+>GTM id</DT
+><DD
+><P
+>      You have a chance to run more than one GTM in
+      one <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> cluster.  
+      For example, if you need a backup of GTM in
+      high-availability environment, you need to run
+      two GTMs.
+      You should give unique GTM id to each of such GTMs.
+      GTM id value begins with one.
+     </P
+></DD
+></DL
+></DIV
+><P
+>    When this is determined, you can initialize GTM with the command <A
+HREF="app-initgtm.html"
+>initgtm</A
+>,
+    for example:
+</P><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>initgtm -Z gtm -D /usr/local/pgsql/data_gtm</KBD
+></PRE
+><P>
+   </P
+><P
+>    All the parameters related to GTM can be modified in <TT
+CLASS="FILENAME"
+>gtm.conf</TT
+>
+    located in data folder initialized by <TT
+CLASS="COMMAND"
+>initgtm</TT
+>.
+   </P
+><P
+>    Then you can start GTM as follows:
+</P><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>gtm -D /usr/local/pgsql/data_gtm</KBD
+></PRE
+><P>
+    where <TT
+CLASS="OPTION"
+>-D</TT
+> option specifies working directory of GTM.
+   </P
+><P
+>    Alternatively, GTM can be started using <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+>, for example:
+</P><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>gtm_ctl -Z gtm start -D /usr/local/pgsql/data_gtm</KBD
+></PRE
+><P>
+   </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="GTM-PROXY-START"
+>16.3.3. Starting GTM-Proxy</A
+></H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>    GTM-Proxy is not a mandatory component of Postgres-XC cluster but
+    it can be used to group messages between GTM and cluster nodes,
+    reducing worload and the number of packages exchanged through network.
+   </P
+><P
+>    As described in the previous section, <TT
+CLASS="FILENAME"
+>GTM-Proxy</TT
+> needs
+    its own listen address, port, working directory and GTM-Proxy ID,
+    which should be unique and begins with one.
+    In addition, you should determine how many working threads to
+    run.
+    You should also use GTM's address and port to start <TT
+CLASS="FILENAME"
+>GTM-Proxy</TT
+>.
+   </P
+><P
+>    Then, you need first to initialize GTM-Proxy with <TT
+CLASS="COMMAND"
+>initgtm</TT
+>,
+    for example:
+</P><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>initgtm -Z gtm_proxy -D /usr/local/pgsql/data_gtm_proxy</KBD
+></PRE
+><P>
+   </P
+><P
+>    All the parameters related to GTM-Proxy can be modified in <TT
+CLASS="FILENAME"
+>gtm_proxy.conf</TT
+>
+    located in data folder initialized by <TT
+CLASS="COMMAND"
+>initgtm</TT
+>.
+   </P
+><P
+>    Then, you can start <TT
+CLASS="FILENAME"
+>GTM-Proxy</TT
+> like:
+</P><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>gtm_proxy -D /usr/local/pgsql/data_gtm_proxy</KBD
+></PRE
+><P>
+    where <TT
+CLASS="OPTION"
+>-D</TT
+> specifies <TT
+CLASS="FILENAME"
+>GTM-Proxy</TT
+>'s working
+    directory.
+   </P
+><P
+>   Alternatively, you can start GTM-Proxy using <TT
+CLASS="FILENAME"
+>gtm_ctl</TT
+>
+   as follows:
+</P><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>gtm_ctl start -Z gtm_proxy -D /usr/local/pgsql/data_gtm_proxy</KBD
+></PRE
+><P>
+  </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="DATANODE-CONFIGURATION"
+>16.3.4. Configuring Datanode</A
+></H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>    Before starting Coordinator or Datanode, you must configure them.
+    You can configure Coordinator or Datanode by
+    editing <TT
+CLASS="FILENAME"
+>postgresql.conf</TT
+> file located at their working
+    directory as you specified by <TT
+CLASS="OPTION"
+>-D</TT
+> option
+    in <TT
+CLASS="FILENAME"
+>initdb</TT
+> command.
+   </P
+><P
+>    Datanode is almost native <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> with some
+    extension.
+    Additional options in <TT
+CLASS="FILENAME"
+>postgresql.conf</TT
+> for the
+    Datanode are as follows:
+   </P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+>max_connections</DT
+><DD
+><P
+>     This value is not just a number of connections you expect to each
+     Coordinator.
+	 Each Coordinator backend has a chance to connect to all the
+     Datanode.
+     You should specify number of total connections whole Coordinator
+     may accept.
+     For example, if you have five Coordinators and each of them may
+     accept forty connections, you should specify 200 as this
+     parameter value.
+    </P
+></DD
+><DT
+>max_prepared_transactions</DT
+><DD
+><P
+>     Even though your application does not intend to
+     issue <TT
+CLASS="COMMAND"
+>PREPARE TRANSACTION</TT
+>, Coordinator may issue this
+     internally when more than one Datanode are involved.
+	 You should specify this parameter the same value
+     as <TT
+CLASS="FILENAME"
+>max_connections</TT
+>.
+    </P
+></DD
+><DT
+>pgxc_node_name</DT
+><DD
+><P
+>     GTM needs to identify each Datanode, as specified by
+     this parameter.
+     The value should be unique and start with one.
+    </P
+></DD
+><DT
+>port</DT
+><DD
+><P
+>     Because both Coordinator and Datanode may run on the same server,
+     you may want to assign separate port number to the Datanode.
+    </P
+></DD
+><DT
+>gtm_port</DT
+><DD
+><P
+>     Specify the port number of GTM-Proxy, as specified
+     in <TT
+CLASS="OPTION"
+>-p</TT
+> option in <TT
+CLASS="COMMAND"
+>gtm_proxy</TT
+>
+     or <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+>.
+    </P
+></DD
+><DT
+>gtm_host</DT
+><DD
+><P
+>     Specify the host name or IP address of GTM-Proxy, as specified
+     in <TT
+CLASS="OPTION"
+>-h</TT
+> option in <TT
+CLASS="COMMAND"
+>gtm_proxy</TT
+>
+     or <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+>.
+    </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="COORDINATOR-CONFIGURATION"
+>16.3.5. Configuring Coordinator</A
+></H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>    Although Coordinator and Datanode shares the same binary, their
+    configuration is a little different due to their functionalities.
+   </P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+>max_connections</DT
+><DD
+><P
+>     You don't have to take other Coordinator or Datanode into
+     account.
+	 Just specify the number of connections the Coordinator accepts
+     from applications.
+    </P
+></DD
+><DT
+>max_prepared_transactions</DT
+><DD
+><P
+>     Specify at least total number of Coordinators in the cluster.
+    </P
+></DD
+><DT
+>pgxc_node_name</DT
+><DD
+><P
+>     GTM needs to identify each Datanode, as specified by
+     this parameter.
+    </P
+></DD
+><DT
+>port</DT
+><DD
+><P
+>     Because both Coordinator and Datanode may run on the same server,
+     you may want to assign separate port number to the Coordinator.
+     It may be convenient to use default value of PostgreSQL listen
+     port.
+    </P
+></DD
+><DT
+>gtm_port</DT
+><DD
+><P
+>     Specify the port number of GTM-Proxy, as specified
+     in <TT
+CLASS="OPTION"
+>-p</TT
+> option in <TT
+CLASS="COMMAND"
+>gtm_proxy</TT
+>
+     or <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+>.
+    </P
+></DD
+><DT
+>gtm_host</DT
+><DD
+><P
+>     Specify the host name or IP address of GTM-Proxy, as specified
+     in <TT
+CLASS="OPTION"
+>-h</TT
+> option in <TT
+CLASS="COMMAND"
+>gtm_proxy</TT
+>
+     or <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+>.
+    </P
+></DD
+><DT
+>max_pool_size</DT
+><DD
+><P
+>     Coordinator maintains connections to Datanode as a pool.
+     This parameter specifies max number of connections the
+     Coordinator maintains.
+     Specify <TT
+CLASS="OPTION"
+>max_connection</TT
+> value of remote nodes as this
+     parameter value.
+    </P
+></DD
+><DT
+>min_pool_size</DT
+><DD
+><P
+>     This is the minimum number of Coordinator to remote node connections
+     maintained by the pooler.
+     Typically specify 1.
+    </P
+></DD
+><DT
+>max_coordinators</DT
+><DD
+><P
+>     This is the maximum number of Coordinators that can be configured in the cluster.
+     Specify exact number if it is not planned to add more Coordinators
+     while cluster is running, or greater, if it is desired to dynamically
+     resize cluster. It costs about 140 bytes of shared memory per slot.
+    </P
+></DD
+><DT
+>max_datanodes</DT
+><DD
+><P
+>     This is the maximum number of Datanodes configured in the cluster.
+     Specify exact number if it is not planned to add more Datanodes
+     while cluster is running, or greater, if it is desired to dynamically
+     resize cluster. It costs about 140 bytes of shared memory per slot.
+    </P
+></DD
+><DT
+>enforce_two_phase_commit</DT
+><DD
+><P
+>     Enforce the usage of two-phase commit on transactions involving ON COMMIT actions
+     or temporary objects. Usage of autocommit instead of two-phase commit may break data
+     consistency so use at your own risk.
+    </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="STARTING-DATANODE"
+>16.3.6. Starting Datanodes</A
+></H2
+><P
+>    Now you can start central component
+    of <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>, Datanode and Coordinator.
+	If you're familiar with starting <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>
+    database server, this step is very similar to <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>.
+   </P
+><P
+>    You can start a Datanode as follows:
+</P><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>postgres -X -D /usr/local/pgsql/data</KBD
+></PRE
+><P>
+    <TT
+CLASS="OPTION"
+>-X</TT
+> specifies <TT
+CLASS="COMMAND"
+>postgres</TT
+> should run as a
+    Datanode. You may need to specify <TT
+CLASS="OPTION"
+>-i</TT
+> <TT
+CLASS="COMMAND"
+>postgres</TT
+> to
+    accept connection from TCP/IP connections or edit <TT
+CLASS="FILENAME"
+>pg_hba.conf</TT
+>
+    if cluster uses nodes among several servers.
+   </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="STARTING-COORDINATOR"
+>16.3.7. Starting Coordinators</A
+></H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>    You can start a Coordinator as follows:
+</P><PRE
+CLASS="SCREEN"
+><SAMP
+CLASS="PROMPT"
+>$</SAMP
+> <KBD
+CLASS="USERINPUT"
+>postgres -C -D /usr/local/pgsql/Datanode</KBD
+></PRE
+><P>
+    <TT
+CLASS="OPTION"
+>-C</TT
+> specifies <TT
+CLASS="COMMAND"
+>postgres</TT
+> should run as a
+    Coordinator. You may need to specify <TT
+CLASS="OPTION"
+>-i</TT
+> <TT
+CLASS="COMMAND"
+>postgres</TT
+> to
+    accept connection from TCP/IP connections or edit <TT
+CLASS="FILENAME"
+>pg_hba.conf</TT
+>
+    if cluster uses nodes among several servers.
+   </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="SERVER-START-FAILURES"
+>16.3.8. Server Start-up Failures</A
+></H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies both to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> and <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> if not described explicitly.</P
+></BLOCKQUOTE
+></DIV
+><P
+>     There are several common reasons the server might fail to
+     start. Check the server's log file, or start it by hand (without
+     redirecting standard output or standard error) and see what error
+     messages appear. Below we explain some of the most common error
+     messages in more detail.
+    </P
+><P
+></P><PRE
+CLASS="SCREEN"
+>LOG:  could not bind IPv4 socket: Address already in use
+HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+FATAL:  could not create TCP/IP listen socket</PRE
+><P>
+     This usually means just what it suggests: you tried to start
+     another server on the same port where one is already running.
+     However, if the kernel error message is not <SAMP
+CLASS="COMPUTEROUTPUT"
+>Address
+     already in use</SAMP
+> or some variant of that, there might
+     be a different problem. For example, trying to start a server
+     on a reserved port number might draw something like:
+</P><PRE
+CLASS="SCREEN"
+>$ <KBD
+CLASS="USERINPUT"
+>postgres -p 666</KBD
+>
+LOG:  could not bind IPv4 socket: Permission denied
+HINT:  Is another postmaster already running on port 666? If not, wait a few seconds and retry.
+FATAL:  could not create TCP/IP listen socket</PRE
+><P>
+    </P
+><P
+>     A message like:
+</P><PRE
+CLASS="SCREEN"
+>FATAL:  could not create shared memory segment: Invalid argument
+DETAIL:  Failed system call was shmget(key=5440001, size=4011376640, 03600).</PRE
+><P>
+     probably means your kernel's limit on the size of shared memory is
+     smaller than the work area <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>
+     is trying to create (4011376640 bytes in this example). Or it could
+     mean that you do not have System-V-style shared memory support
+     configured into your kernel at all. As a temporary workaround, you
+     can try starting the server with a smaller-than-normal number of
+     buffers (<A
+HREF="runtime-config-resource.html#GUC-SHARED-BUFFERS"
+>shared_buffers</A
+>). You will eventually want
+     to reconfigure your kernel to increase the allowed shared memory
+     size. You might also see this message when trying to start multiple
+     servers on the same machine, if their total space requested
+     exceeds the kernel limit.
+    </P
+><P
+>     An error like:
+</P><PRE
+CLASS="SCREEN"
+>FATAL:  could not create semaphores: No space left on device
+DETAIL:  Failed system call was semget(5440126, 17, 03600).</PRE
+><P>
+     does <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>not</I
+></SPAN
+> mean you've run out of disk
+     space. It means your kernel's limit on the number of <SPAN
+CLASS="SYSTEMITEM"
+>System V</SPAN
+> semaphores is smaller than the number
+     <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> wants to create. As above,
+     you might be able to work around the problem by starting the
+     server with a reduced number of allowed connections
+     (<A
+HREF="runtime-config-connection.html#GUC-MAX-CONNECTIONS"
+>max_connections</A
+>), but you'll eventually want to
+     increase the kernel limit.
+    </P
+><P
+>     If you get an <SPAN
+CLASS="QUOTE"
+>"illegal system call"</SPAN
+> error, it is likely that
+     shared memory or semaphores are not supported in your kernel at
+     all. In that case your only option is to reconfigure the kernel to
+     enable these features.
+    </P
+><P
+>     Details about configuring <SPAN
+CLASS="SYSTEMITEM"
+>System V</SPAN
+>
+     <ACRONYM
+CLASS="ACRONYM"
+>IPC</ACRONYM
+> facilities are given in <A
+HREF="kernel-resources.html#SYSVIPC"
+>Section 16.4.1</A
+>.
+    </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="CLIENT-CONNECTION-PROBLEMS"
+>16.3.9. Client Connection Problems</A
+></H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies both to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> and <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> if not described explicitly.</P
+></BLOCKQUOTE
+></DIV
+><P
+>     Although the error conditions possible on the client side are quite
+     varied and application-dependent, a few of them might be directly
+     related to how the server was started. Conditions other than
+     those shown below should be documented with the respective client
+     application.
+    </P
+><P
+></P><PRE
+CLASS="SCREEN"
+>psql: could not connect to server: Connection refused
+        Is the server running on host "server.joe.com" and accepting
+        TCP/IP connections on port 5432?</PRE
+><P>
+     This is the generic <SPAN
+CLASS="QUOTE"
+>"I couldn't find a server to talk
+     to"</SPAN
+> failure. It looks like the above when TCP/IP
+     communication is attempted. A common mistake is to forget to
+     configure the server to allow TCP/IP connections.
+    </P
+><P
+>     Alternatively, you'll get this when attempting Unix-domain socket
+     communication to a local server:
+</P><PRE
+CLASS="SCREEN"
+>psql: could not connect to server: No such file or directory
+        Is the server running locally and accepting
+        connections on Unix domain socket "/tmp/.s.PGSQL.5432"?</PRE
+><P>
+    </P
+><P
+>     The last line is useful in verifying that the client is trying to
+     connect to the right place. If there is in fact no server
+     running there, the kernel error message will typically be either
+     <SAMP
+CLASS="COMPUTEROUTPUT"
+>Connection refused</SAMP
+> or
+     <SAMP
+CLASS="COMPUTEROUTPUT"
+>No such file or directory</SAMP
+>, as
+     illustrated. (It is important to realize that
+     <SAMP
+CLASS="COMPUTEROUTPUT"
+>Connection refused</SAMP
+> in this context
+     does <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>not</I
+></SPAN
+> mean that the server got your
+     connection request and rejected it. That case will produce a
+     different message, as shown in <A
+HREF="client-authentication-problems.html"
+>Section 18.4</A
+>.) Other error messages
+     such as <SAMP
+CLASS="COMPUTEROUTPUT"
+>Connection timed out</SAMP
+> might
+     indicate more fundamental problems, like lack of network
+     connectivity.
+    </P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="creating-cluster.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="kernel-resources.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Creating a Database Cluster</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="runtime.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Managing Kernel Resources</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

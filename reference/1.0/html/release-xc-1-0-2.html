@@ -1,0 +1,528 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Release 1.0.2</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.0.4 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Release Notes"
+HREF="release.html"><LINK
+REL="PREVIOUS"
+TITLE="Release 1.0.3"
+HREF="release-xc-1-0-3.html"><LINK
+REL="NEXT"
+TITLE="Release 1.0.1"
+HREF="release-xc-1-0-1.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:50:53"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.0.4 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Release 1.0.3"
+HREF="release-xc-1-0-3.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Release Notes"
+HREF="release.html"
+>Fast Backward</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Appendix E. Release Notes</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Release Notes"
+HREF="release.html"
+>Fast Forward</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Release 1.0.1"
+HREF="release-xc-1-0-1.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="RELEASE-XC-1-0-2"
+>E.3. Release 1.0.2</A
+></H1
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Release Date: </B
+>2013-02-05</P
+></BLOCKQUOTE
+></DIV
+><P
+>   This release contains a variety of fixes from 1.0.1.
+   For information about new features in the 1.0 major release, see
+   <A
+HREF="release-xc-1-0.html"
+>Section E.5</A
+>.
+  </P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN110300"
+>E.3.1. Migration to Version 1.0.2</A
+></H2
+><P
+>    A dump/restore is not required for those running 1.0.X.
+   </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN110303"
+>E.3.2. Changes</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>      Fix for bug 3602944: Fixed <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+> to solve
+      the PATH dependency. (Nikhil Sontakke)
+     </P
+></LI
+><LI
+><P
+>      Fix for bug 3601255: Fixed the planner to disable FQS for all
+      the <TT
+CLASS="LITERAL"
+>OUTER</TT
+> joins.
+      (Ashutosh Bapat)
+     </P
+></LI
+><LI
+><P
+>      Fix for bug 3600220: Fixed coordinator/datanode to unregister
+      themselves from GTM while restarting after
+      "<TT
+CLASS="LITERAL"
+>-m immediate</TT
+>" shutdown.
+      (Koichi Suzuki)
+     </P
+></LI
+><LI
+><P
+>      Fixed <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+> for "<TT
+CLASS="LITERAL"
+>status</TT
+>"
+      command with "<TT
+CLASS="LITERAL"
+>-Z gtm</TT
+>" to show the status correctly.
+      (Koichi Suzuki)
+     </P
+><P
+>      Now for <TT
+CLASS="LITERAL"
+>-Z gtm</TT
+> option,
+      <TT
+CLASS="LITERAL"
+>gtm_ctl status</TT
+> displays if it runs as
+      <TT
+CLASS="LITERAL"
+>master</TT
+> or <TT
+CLASS="LITERAL"
+>slave</TT
+>.
+     </P
+></LI
+><LI
+><P
+>      Rebased from PostgreSQL 9.1.6 to 9.1.7, and fixed several regression
+      test failures, which had been newly introduced during the rebase.
+      (Satoshi Nagayasu)
+     </P
+></LI
+><LI
+><P
+>      Fix for bug 3597414: Fixed the planner for JOIN between two distributed
+      tables to be pushable when on only one node.
+      (Ashutosh Bapat)
+     </P
+></LI
+><LI
+><P
+>      Fix for bug 3598637: Fixed GTM standby to avoid occasional crash.
+      (Koichi Suzuki)
+     </P
+></LI
+><LI
+><P
+>      Fixed GTM to deal with a promoted master correctly while restarting.
+      (Nikhil Sontakke, Koichi Suzuki)
+     </P
+></LI
+><LI
+><P
+>      Fix for bug 3583921: Fixed coordinator slave (and possibly datanode too)
+      to avoid crash due to "<TT
+CLASS="LITERAL"
+>too many KnownAssignedXids</TT
+>".
+      (Koichi Suzuki)
+     </P
+></LI
+><LI
+><P
+>      Fix for bug 3598030: Fixed to allow commit/abort transactions while
+      connecting to the datanode directly.
+     </P
+></LI
+><LI
+><P
+>      Fix for bug 3591285: Fixed autovacuum crash in datanode.
+      (Koichi Suzuki)
+     </P
+></LI
+><LI
+><P
+>      Fix for bug 3571154: Fixed GTM proxy error while reconnecting.
+      (Koichi Suzuki)
+     </P
+></LI
+><LI
+><P
+>      Fixed <TT
+CLASS="LITERAL"
+>libgtmclient.a</TT
+> to surpress debug messages.
+      (Koichi Suzuki)
+     </P
+></LI
+><LI
+><P
+>      Fixed GTM proxy to have appropriate default values (retry count and
+      retry interval) for GTM proxy HA.
+      (Koichi Suzuki)
+     </P
+></LI
+><LI
+><P
+>      Fix for bug 3588869: Fixed GTM proxy to avoid stall while reconnecting.
+      (Koichi Suzuki)
+     </P
+></LI
+><LI
+><P
+>      Fixed to enforce autocommit when running <TT
+CLASS="COMMAND"
+>ALTER DATABASE SET
+      TABLESPACE</TT
+>.
+      (Michael Paquier)
+     </P
+></LI
+><LI
+><P
+>      Fixed <TT
+CLASS="COMMAND"
+>pgxc_clean</TT
+> for <TT
+CLASS="LITERAL"
+>-s</TT
+>,
+      <TT
+CLASS="LITERAL"
+>--status</TT
+> option working correctly.
+      (Koichi Suzuki)
+     </P
+></LI
+><LI
+><P
+>      Fixed "<TT
+CLASS="COMMAND"
+>SET XC_MAINTENANCE_MODE = ON</TT
+>" to ignore
+      "<TT
+CLASS="LITERAL"
+>template0</TT
+>" database.
+      (Koichi Suzuki)
+     </P
+></LI
+><LI
+><P
+>      Fixed GTM and GTM proxy for inaccurate default values of the port number.
+      (Koichi Suzuki)
+     </P
+></LI
+><LI
+><P
+>      Added GTM header files in installation to allow compiling server modules.
+      (Michael Paquier)
+     </P
+></LI
+><LI
+><P
+>      Added support to create cached plans for XC-specific DDL commands.
+      (Michael Paquier)
+     </P
+><P
+>      This allows to use cached plans or prepared queries for following
+      commands: <TT
+CLASS="COMMAND"
+>CREATE NODE</TT
+>, <TT
+CLASS="COMMAND"
+>ALTER NODE</TT
+>,
+      <TT
+CLASS="COMMAND"
+>DROP NODE</TT
+>, <TT
+CLASS="COMMAND"
+>CREATE NODE GROUP</TT
+>,
+      <TT
+CLASS="COMMAND"
+>DROP NODE GROUP</TT
+>, <TT
+CLASS="COMMAND"
+>CLEAN CONNECTION</TT
+>.
+     </P
+></LI
+><LI
+><P
+>      Fixed <TT
+CLASS="COMMAND"
+>CREATE NODE GROUP</TT
+>/<TT
+CLASS="COMMAND"
+>DROP NODE
+      GROUP</TT
+> commands to stop query pushdown to remote nodes.
+      (Michael Paquier)
+     </P
+></LI
+><LI
+><P
+>      Fixed memory allocation issues pointed by ElectricFence (libefence).
+      (Michael Paquier)
+     </P
+></LI
+><LI
+><P
+>      Fixed memory corruption in GTM/backend buffer for snapshots and
+      transaction IDs.
+      (Michael Paquier)
+     </P
+></LI
+><LI
+><P
+>      Fixed <TT
+CLASS="COMMAND"
+>COPY</TT
+> command to deal with quoted column names.
+      (Nikhil Sontakke, Michael Paquier)
+     </P
+></LI
+><LI
+><P
+>      Fixed to ignore automatically generated regression outputs specific
+      to Postgres-XC. 
+      (Michael Paquier)
+     </P
+></LI
+><LI
+><P
+>      Fixed <TT
+CLASS="COMMAND"
+>COPY</TT
+> command to avoid crash when involving
+      relation with no locator data.
+      (Michael Paquier)
+     </P
+></LI
+><LI
+><P
+>      Fixed <TT
+CLASS="COMMAND"
+>ALTER NODE</TT
+> to allow modifying primary node data.
+      (Michael Paquier)
+     </P
+></LI
+><LI
+><P
+>      Fixed compilation error in <TT
+CLASS="COMMAND"
+>pg_dump</TT
+>.
+      (Michael Paquier)
+     </P
+></LI
+><LI
+><P
+>      Changed current value management of sequences to make it consistent
+      with vanilla.
+      (Michael Paquier)
+     </P
+></LI
+><LI
+><P
+>      Fixed <TT
+CLASS="COMMAND"
+>pg_dump</TT
+> to get consistent sequence dump value.
+      (Nikkhil Sontakke, Michael Paquier)
+     </P
+></LI
+><LI
+><P
+>      Fixed and improved docs for several XC-specific commands, options and
+      parameters.
+      (Koichi Suzuki, Michael Paquier)
+     </P
+></LI
+></UL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="release-xc-1-0-3.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="release-xc-1-0-1.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Release 1.0.3</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="release.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Release 1.0.1</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

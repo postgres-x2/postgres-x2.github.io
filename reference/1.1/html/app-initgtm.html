@@ -1,0 +1,518 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>initgtm</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.1.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="PostgreSQL Server Applications"
+HREF="reference-server.html"><LINK
+REL="PREVIOUS"
+TITLE="initdb"
+HREF="app-initdb.html"><LINK
+REL="NEXT"
+TITLE="pg_controldata"
+HREF="app-pgcontroldata.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:47:50"></HEAD
+><BODY
+CLASS="REFENTRY"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.1.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="initdb"
+HREF="app-initdb.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="reference-server.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="pg_controldata"
+HREF="app-pgcontroldata.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="APP-INITGTM"
+></A
+>initgtm</H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN88174"
+></A
+><H2
+>Name</H2
+>initgtm&nbsp;--&nbsp;create a new <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> GTM or GTM-Proxy for database cluster</DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN88180"
+></A
+><H2
+>Synopsis</H2
+><P
+><TT
+CLASS="COMMAND"
+>initgtm</TT
+> [<TT
+CLASS="REPLACEABLE"
+><I
+>option</I
+></TT
+>...]  --pgdata | -D <TT
+CLASS="REPLACEABLE"
+><I
+>directory</I
+></TT
+>   -Z <TT
+CLASS="REPLACEABLE"
+><I
+>nodetype</I
+></TT
+> </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="R1-APP-INITGTM-1"
+></A
+><H2
+>   Description
+  </H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies both to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> and <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> if not described explicitly.</P
+></BLOCKQUOTE
+></DIV
+><P
+>   <TT
+CLASS="COMMAND"
+>initgtm</TT
+> creates a new GTM or GTM-Proxy node for a
+   <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> database cluster.  A database
+   cluster has a unique GTM. A GTM-Proxy acts as an intermediate component
+   between GTM and Postgres-XC nodes to group request messages. Each Coordinator
+   and Datanode of the cluster need to register to GTM when starting up.
+  </P
+><P
+>   Creating a GTM for cluster consists of creating the directories and files in
+   which the GTM data will live.
+  </P
+><P
+>   Although <TT
+CLASS="COMMAND"
+>initgtm</TT
+> will attempt to create the
+   specified data directory, it might not have permission if the parent
+   directory of the desired data directory is root-owned. To initialize
+   in such a setup, create an empty data directory as root, then use
+   <TT
+CLASS="COMMAND"
+>chown</TT
+> to assign ownership of that directory to the
+   database user account, then <TT
+CLASS="COMMAND"
+>su</TT
+> to become the
+   database user to run <TT
+CLASS="COMMAND"
+>initgtm</TT
+>.
+  </P
+><P
+>   <TT
+CLASS="COMMAND"
+>initgtm</TT
+> must be run as the user that will own the
+   server process, because the server needs to have access to the
+   files and directories that <TT
+CLASS="COMMAND"
+>initgtm</TT
+> creates.
+   Since the server cannot be run as root, you must not run
+   <TT
+CLASS="COMMAND"
+>initgtm</TT
+> as root either.  (It will in fact refuse
+   to do so.)
+  </P
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>   <TT
+CLASS="COMMAND"
+>initgtm</TT
+> will be performed locally.
+  </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN88215"
+></A
+><H2
+>Options</H2
+><P
+>    <P
+></P
+></P><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>-D <TT
+CLASS="REPLACEABLE"
+><I
+>directory</I
+></TT
+></TT
+><BR><TT
+CLASS="OPTION"
+>--pgdata=<TT
+CLASS="REPLACEABLE"
+><I
+>directory</I
+></TT
+></TT
+></DT
+><DD
+><P
+>        This option specifies the directory where the GTM data
+        should be stored. Data folder and node type are the only information
+        required by <TT
+CLASS="COMMAND"
+>initgtm</TT
+>. You can avoid writing it by
+        setting the <TT
+CLASS="ENVAR"
+>PGDATA</TT
+> environment variable.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-Z <TT
+CLASS="REPLACEABLE"
+><I
+>nodetype</I
+></TT
+></TT
+></DT
+><DD
+><P
+>        This option specifies the node type which is initialized. It is possible to
+        specify gtm to set up a GTM node, or gtm_proxy to set up a GTM-Proxy.
+       </P
+></DD
+></DL
+></DIV
+><P>
+   </P
+><P
+>    Other, less commonly used, parameters are also available:
+
+    <P
+></P
+></P><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>-d</TT
+><BR><TT
+CLASS="OPTION"
+>--debug</TT
+></DT
+><DD
+><P
+>        Print debugging output from the bootstrap backend and a few other
+        messages of lesser interest for the general public.
+        The bootstrap backend is the program <TT
+CLASS="COMMAND"
+>initgtm</TT
+>
+        uses to create the catalog tables.  This option generates a tremendous
+        amount of extremely boring output.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-n</TT
+><BR><TT
+CLASS="OPTION"
+>--noclean</TT
+></DT
+><DD
+><P
+>        By default, when <TT
+CLASS="COMMAND"
+>initgtm</TT
+>
+        determines that an error prevented it from completely creating GTM data
+        it removes any files it might have created before discovering
+        that it cannot finish the job. This option inhibits tidying-up and is
+        thus useful for debugging.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-V</TT
+><BR><TT
+CLASS="OPTION"
+>--version</TT
+></DT
+><DD
+><P
+>       Print the <SPAN
+CLASS="APPLICATION"
+>initgtm</SPAN
+> version and exit.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-?</TT
+><BR><TT
+CLASS="OPTION"
+>--help</TT
+></DT
+><DD
+><P
+>       Show help about <SPAN
+CLASS="APPLICATION"
+>initgtm</SPAN
+> command line
+       arguments, and exit.
+       </P
+></DD
+></DL
+></DIV
+><P>
+   </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN88270"
+></A
+><H2
+>Environment</H2
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="ENVAR"
+>PGDATA</TT
+></DT
+><DD
+><P
+>      Specifies the directory where the GTM data is to be
+      stored; can be overridden using the <TT
+CLASS="OPTION"
+>-D</TT
+> option.
+     </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN88279"
+></A
+><H2
+>Notes</H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>   <TT
+CLASS="COMMAND"
+>initgtm</TT
+> runs only locally.
+  </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN88286"
+></A
+><H2
+>See Also</H2
+><A
+HREF="app-gtm-ctl.html"
+>gtm_ctl</A
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="app-initdb.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="app-pgcontroldata.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>initdb</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="reference-server.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><SPAN
+CLASS="APPLICATION"
+>pg_controldata</SPAN
+></TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

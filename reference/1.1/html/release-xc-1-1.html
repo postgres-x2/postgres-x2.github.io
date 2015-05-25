@@ -1,0 +1,1236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Release 1.1</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.1.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Release Notes"
+HREF="release.html"><LINK
+REL="PREVIOUS"
+TITLE="Release 1.1.1"
+HREF="release-xc-1-1-1.html"><LINK
+REL="NEXT"
+TITLE="Additional Supplied Modules"
+HREF="contrib.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:47:50"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.1.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Release 1.1.1"
+HREF="release-xc-1-1-1.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="release.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Appendix E. Release Notes</TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Additional Supplied Modules"
+HREF="contrib.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="RELEASE-XC-1-1"
+>E.7. Release 1.1</A
+></H1
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Release Date: </B
+>2013-08-22</P
+></BLOCKQUOTE
+></DIV
+><P
+>   This release contains new feature in and a variety of fixes in 1.1.
+  </P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN113957"
+>E.7.1. Migration to Version 1.1</A
+></H2
+><P
+>    A dump/restore is not required for those running 1.0.X.
+   </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN113960"
+>E.7.2. Overview</A
+></H2
+><P
+>    Postgres-XC is a symmetric (multi-master, read and write-scalable) shared-nothing cluster 
+    based on <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>. 
+    This release version is based on <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> 9.2.
+   </P
+><P
+>    Currently the only architectures supported are 64 bit Linux operating systems.
+   </P
+><P
+>    This release of <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> is the second major release and 
+    contains the following features, characteristics and enhancements.
+   </P
+><P
+></P
+><UL
+><LI
+><P
+>      Support and extensions for existing features of PostgreSQL in a cluster-wide environment.
+     </P
+></LI
+><LI
+><P
+>      SQL extensions and functionalities exclusive to Postgres-XC for management and operations 
+      related to a cluster, which add a node-level granularity for cluster operations.
+     </P
+></LI
+><LI
+><P
+>      Creation of Global Transaction Manager (GTM), which is a centralized component 
+      providing cluster-wide Multi-version Concurrency Control (MVCC).
+     </P
+></LI
+><LI
+><P
+>      Creation of mechanisms exclusive to Postgres-XC and enhancements of existing 
+      internal mechanisms of PostgreSQL, which are related to connection pooling, 
+      global transaction management, query planning, rewriting, analyzing and execution.
+     </P
+></LI
+><LI
+><P
+>      Add/remove nodes while Postgres-XC cluster is in operation.
+     </P
+></LI
+><LI
+><P
+>      Basic Postgres-XC configuration and operation tool.
+     </P
+></LI
+><LI
+><P
+>      Restrictions related to existing features in PostgreSQL and currently 
+      not supported by Postgres-XC.
+     </P
+></LI
+></UL
+><P
+>    The above items are explained in more detail in the sections below.
+   </P
+><P
+>    The original overall architecture and design of Postgres-XC is by Koichi Suzuki, 
+    Mason Sharp, Pavan Deolasee, Andrei Martsinchyk and Michael Paquier. 
+    Koichi Suzuki is the original project lead.
+   </P
+><P
+>    Core member at the time Version 1.1 is released is Koichi Suzuki, Ashutosh Bapat, 
+    Ababs Butt, Amit Khandaker, Ahsan Hadi, Takayuki Suto, Tetsuo Sakata, 
+    Masaki Hisada and Hitoshi Hemmi.
+   </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN113986"
+>E.7.3. New Features</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>      Node addition and removal while Postgres-XC cluster is in operation.
+     </P
+></LI
+><LI
+><P
+>      Added <TT
+CLASS="LITERAL"
+>--restoremode</TT
+> option to <SPAN
+CLASS="APPLICATION"
+>pg_ctl</SPAN
+> to import 
+      catalog information from other coordinator/datanode, 
+      used when adding new node.   By Koichi Suzuki and Abbas Butt
+     </P
+></LI
+><LI
+><P
+>      Added <TT
+CLASS="LITERAL"
+>--include-nodes</TT
+> option to <SPAN
+CLASS="APPLICATION"
+>pg_dump</SPAN
+> and 
+      <SPAN
+CLASS="APPLICATION"
+>pg_dumpall</SPAN
+> to export node information as well.   
+      Mainly for node addition.   By Abbas Butt.
+     </P
+><P
+>      Done by improving <SPAN
+CLASS="APPLICATION"
+>initdb</SPAN
+>, 
+      <SPAN
+CLASS="APPLICATION"
+>pg_dump</SPAN
+>/<SPAN
+CLASS="APPLICATION"
+>pg_dumpall</SPAN
+> and 
+      new function <TT
+CLASS="LITERAL"
+>pgxc_lock_for_backup()</TT
+>, by Abbas Butt and Amit Khandekar.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="LITERAL"
+>pgxc_lock_for_backup()</TT
+> function to disable DDLs while new node is 
+      going to be added and catalog is exported to the new node.   By Abbas Butt.
+     </P
+></LI
+><LI
+><P
+>      Row TRIGGER support.   By Amit Khandelar and Ashutosh Bapat
+     </P
+></LI
+><LI
+><P
+>      RETURNING support.   By Abbas Butt and Ashutosh Bapat
+     </P
+></LI
+><LI
+><P
+>      <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> tool for <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> cluster 
+      configuration and operation (contrib module).  By Koichi Suzuki
+     </P
+></LI
+><LI
+><P
+>      Added <TT
+CLASS="LITERAL"
+>-U</TT
+> and <TT
+CLASS="LITERAL"
+>-d</TT
+> option in <SPAN
+CLASS="APPLICATION"
+>pgxc_monitor</SPAN
+>, 
+        by Koichi Suzuki
+     </P
+></LI
+><LI
+><P
+>      Added <TT
+CLASS="LITERAL"
+>\d+</TT
+> to print table distribution info in <SPAN
+CLASS="APPLICATION"
+>psql</SPAN
+>, 
+      by Ashutosh Bapat and Benny.
+     </P
+></LI
+><LI
+><P
+>      Added <TT
+CLASS="LITERAL"
+>-C</TT
+> option to <SPAN
+CLASS="APPLICATION"
+>gtm_ctl</SPAN
+> to specify selected 
+      gtm control file at the start.   By Koichi Suzuki.
+     </P
+></LI
+><LI
+><P
+>      <SPAN
+CLASS="APPLICATION"
+>pgxc_monitor</SPAN
+> (contrib module), by Koichi Suzuki.
+     </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN114032"
+>E.7.4. Improvements</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>      Improve error handling of statements which runs outside a transaction block. By Amit Khandekar.
+     </P
+></LI
+><LI
+><P
+>      Push down sorting operation to the datanodes by using <TT
+CLASS="COMMAND"
+>ORDER BY</TT
+> clause 
+      in queries to sent to the datanodes.  
+      With this push-down, sort keys should be shippable.  By Ashutosh Bapat.
+     </P
+></LI
+><LI
+><P
+>      Push down <TT
+CLASS="COMMAND"
+>LIMIT</TT
+> clause to datanodes, by Ashutosh Bapat.
+     </P
+></LI
+><LI
+><P
+>      Pushdown outer joins to datanodes, by Ashutosh Bapat.
+     </P
+></LI
+><LI
+><P
+>      Improve fast query shipping to ship queries containing subqueries, by Ashutosh Bapat
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="COMMAND"
+>ALTER TABLE</TT
+> statement to redistribute tables.  
+      By Michael Paquier and Ashutosh Bapat
+     </P
+></LI
+><LI
+><P
+>      Push <TT
+CLASS="COMMAND"
+>GROUP BY</TT
+> clause to the datanodes when there is 
+      <TT
+CLASS="COMMAND"
+>ORDER BY</TT
+>, <TT
+CLASS="COMMAND"
+>LIMIT</TT
+> and other clauses in the query. 
+      By Ashutosh Bapat.
+     </P
+></LI
+><LI
+><P
+>      <SPAN
+CLASS="APPLICATION"
+>Initdb</SPAN
+> improved so that created coordinator or datanode 
+      can start with any value of GXID. Needed for node addition.  By Amit Khandekar.
+     </P
+></LI
+><LI
+><P
+>      Backup gtm restart point when <TT
+CLASS="COMMAND"
+>CREATE BARRIER</TT
+> is issued. 
+      By Koichi Suzuki.  Reviewd by Pavan Deolasee and Nikhin Sontakke.
+     </P
+></LI
+><LI
+><P
+>      Refactoring GTM message level to optimize the amount of log lines.   By Koichi Suzuki
+     </P
+></LI
+><LI
+><P
+>      Merge and hash join at coordinators, by Ashutosh Bapat.
+     </P
+></LI
+><LI
+><P
+>      Use distributed sorting for merge join and grouping at coordinator, by Ashutosh Bapat
+     </P
+></LI
+><LI
+><P
+>      Now GTM headers are in installation directory, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Merge with <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL 9.2</SPAN
+>.  
+      By Michael Paquier, Satoshi Nagayasu, Koichi Suzuki, Takayuki Suto, 
+      Abbas Butt, Ashutosh Bapat and Amit Khandekar.
+     </P
+></LI
+><LI
+><P
+>      Refactor <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> planner to use RemoteQuery paths 
+      for scanning relations (joins or plain) at the datanodes. 
+      Move <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-xc</SPAN
+> specific planner files to the corresponding 
+      directory with other planner related files in <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>.
+     </P
+></LI
+><LI
+><P
+>      Many many code refactoring and tweaks in coordinator/datanode.   
+      By Michael Paquier, Amit Khandaker and Abbas Butt.
+     </P
+></LI
+><LI
+><P
+>      Refactoring <SPAN
+CLASS="APPLICATION"
+>pgbench</SPAN
+>, by Michael Paquier.
+     </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN114082"
+>E.7.5. Interface changes</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>      <TT
+CLASS="COMMAND"
+>Execute Direct</TT
+> statement syntax changed as <TT
+CLASS="COMMAND"
+>EXECUTE DIRECT ON (nodename ...) </TT
+>
+     </P
+></LI
+><LI
+><P
+>      postgres startup option <TT
+CLASS="LITERAL"
+>-X</TT
+> and <TT
+CLASS="LITERAL"
+>-C</TT
+> are 
+      now <TT
+CLASS="LITERAL"
+>--datanode</TT
+> and <TT
+CLASS="LITERAL"
+>--coordinator</TT
+> respectively.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="LITERAL"
+>REPLICATION</TT
+>, <TT
+CLASS="LITERAL"
+>MODULO</TT
+>, <TT
+CLASS="LITERAL"
+>HASH</TT
+>, 
+      <TT
+CLASS="LITERAL"
+>ROUND</TT
+> and <TT
+CLASS="LITERAL"
+>ROBIN</TT
+> were removed from keywords.
+     </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN114102"
+>E.7.6. Bug Fixes</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>      Sequence removal on GTM when database is dropped, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="COMMAND"
+>ORDER BY</TT
+> query plan correction, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Fix <TT
+CLASS="COMMAND"
+>INSERT SELECT</TT
+> for replicated tables, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Push <TT
+CLASS="LITERAL"
+>-l</TT
+> option from <SPAN
+CLASS="APPLICATION"
+>gtm_ctl</SPAN
+> to
+      <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Fix for regressions, by Michael Paquier, Takayuki Suto, Koichi Suzuki, 
+      Abbas Butt, Ashutosh Bapat and Amit Khandaker.
+     </P
+></LI
+><LI
+><P
+>      <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> status fix, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="COMMAND"
+>COPY</TT
+> for partially distributed tables, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Fix wrong reference in GTM standby, by Andrei Martsinchyk.
+     </P
+></LI
+><LI
+><P
+>      Fix GTM thread to manage thread backup, by Andrei Martsinchyk.
+     </P
+></LI
+><LI
+><P
+>      Release GTM thread lock before exit, by Andrei Martsinchyk.
+     </P
+></LI
+><LI
+><P
+>      Block GXID generation on standbys, by Andrei Martsinchyk.
+     </P
+></LI
+><LI
+><P
+>      Change <TT
+CLASS="FILENAME"
+>gtm.control</TT
+> file format into text, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Fix command ID handling/communication to datanode, by Michael Paquier and Abbas Butt.
+     </P
+></LI
+><LI
+><P
+>      Block write operations on Datanode when not accessed from Coordinator, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Block <TT
+CLASS="COMMAND"
+>EXECUTE DIRECT</TT
+> from datanodes, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Correct query generation of COPY with quoted table names, by Nikhil Sontakke.
+     </P
+></LI
+><LI
+><P
+>      Fix race condition in GXID generation for autovacuum wraparound, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Fix parameter building in SPI calls, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Get consistent sequence dump value with <SPAN
+CLASS="APPLICATION"
+>pg_dump</SPAN
+>, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Fix current value of sequence to be consistent with 
+      vanilla <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>, by Nikhil Sontakke.
+     </P
+></LI
+><LI
+><P
+>      Fix race condition in GXID generation for autovacuum wraparound, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Allow primary node data modification with <TT
+CLASS="COMMAND"
+>ALTER NODE</TT
+>, by Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Fix crash when <TT
+CLASS="COMMAND"
+>COPY</TT
+> involves relation with no locator data, 
+      by Nikhil Sontakke and Michael Paquier.
+     </P
+></LI
+><LI
+><P
+>      Fix <TT
+CLASS="COMMAND"
+>COPY</TT
+> query expression with quoted column names, by Nikhil Sontakke.
+     </P
+></LI
+><LI
+><P
+>      Fix coordinator/datanode slave crash at long run, by Koichi Suzuki.
+     </P
+></LI
+><LI
+><P
+>      Fix default value of port for both gtm and gtm_proxy, by Koichi Suzuki.
+     </P
+></LI
+><LI
+><P
+>      Fix <TT
+CLASS="LITERAL"
+>--status</TT
+> option for <SPAN
+CLASS="APPLICATION"
+>gtm_ctl</SPAN
+>, by Koichi Suzuki.
+     </P
+></LI
+><LI
+><P
+>      Fix DMLs on replicated tables, by Abbas Butt.
+     </P
+></LI
+><LI
+><P
+>      Fix the case <SPAN
+CLASS="APPLICATION"
+>gtm_proxy</SPAN
+> does not reconnect or crash, by Koichi Suzuki
+     </P
+></LI
+><LI
+><P
+>      Fix to restart promoted <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+> as the master, by Nikhill Sontakke.
+     </P
+></LI
+><LI
+><P
+>      Improve node registration to <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>, by Koichi Suzuki.
+     </P
+></LI
+><LI
+><P
+>      Improve <SPAN
+CLASS="APPLICATION"
+>gtm_ctl</SPAN
+> belavior with <TT
+CLASS="LITERAL"
+>-l</TT
+> option, by Koichi Suzuki
+     </P
+></LI
+><LI
+><P
+>      Allow <TT
+CLASS="LITERAL"
+>xc_maintenance_mode</TT
+> to use DML in execute direct and direct connection to datanodes, 
+      by Koichi Suzuki
+     </P
+></LI
+><LI
+><P
+>      Fix <SPAN
+CLASS="APPLICATION"
+>gtm_ctl</SPAN
+> start behavior with -w option, by Nikhil Sontakke.
+     </P
+></LI
+><LI
+><P
+>      Fix of occasional <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+> slave crash, by Nikhil Sontakke.
+     </P
+></LI
+><LI
+><P
+>      Fix memory context usage in <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+>, by Nikhill Sontakke.
+     </P
+></LI
+><LI
+><P
+>      Fix <TT
+CLASS="COMMAND"
+>copy</TT
+> command with table name qualified by a schema name, 
+      by Nikhil Sontakke.
+     </P
+></LI
+><LI
+><P
+>      Fix <TT
+CLASS="LITERAL"
+>pgxc_advisory_lock</TT
+> to succeed when the lock can be acquired or 
+      it is already held by the same transaction.
+     </P
+></LI
+><LI
+><P
+>      Fix <TT
+CLASS="LITERAL"
+>get_next</TT
+> of the sequence, by Nikhil Sontakke.
+     </P
+></LI
+><LI
+><P
+>      Fix sequence backup to <SPAN
+CLASS="APPLICATION"
+>gtm</SPAN
+> slave, by Andrei Martsinchyk.
+     </P
+></LI
+><LI
+><P
+>      Fix incorrect disconnect handling in GTM Proxy, by Andrei Martsinchyk.
+     </P
+></LI
+><LI
+><P
+>      Fix message level related to <TT
+CLASS="LITERAL"
+>BARRIER</TT
+>, by Koichi Suzuki.
+      Reviewd by Michael Paquier and Nikhil Sontakke.
+     </P
+></LI
+><LI
+><P
+>      Fix potential memory leak at coordinator part of GTM, by Andrei Martsinchyk.
+     </P
+></LI
+><LI
+><P
+>      Fix calculation of gxid range in MSG_TXN_BEGIN_GETGXID_MULTI message handling in GTM,
+      by Nikhil Sontakke.
+     </P
+></LI
+><LI
+><P
+>      Fix 1024 limitation of sequence defined in GTM.
+      By Andrei Martsinchyk.
+     </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN114225"
+>E.7.7. Restrictions</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>      <TT
+CLASS="LITERAL"
+>SERIALIZABLE</TT
+> and <TT
+CLASS="LITERAL"
+>REPEATABLE READ</TT
+> transaction isolation modes are not supported.
+     </P
+></LI
+><LI
+><P
+>      Only constraints which can be enforced only locally to a datanode are supported.
+      For example, UNIQUE constraints for non-distribute column is not supported in distributed tables.
+     </P
+></LI
+><LI
+><P
+>      Using complicated statement in <TT
+CLASS="COMMAND"
+>PREPARE</TT
+> steatement may not 
+      be supported (depends upon specific statement). 
+     </P
+></LI
+><LI
+><P
+>      Row triggers do not work with <TT
+CLASS="COMMAND"
+>COPY</TT
+>.
+     </P
+></LI
+><LI
+><P
+>      Privilege to views may not work correctly.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="COMMAND"
+>COPY TO</TT
+> from replicated table does not work.
+     </P
+></LI
+><LI
+><P
+>      Quoted cast may not work.  For example, <TT
+CLASS="LITERAL"
+>select "my table".*::"my table" from "my table";</TT
+> 
+      does not work. Use <TT
+CLASS="LITERAL"
+>select row("my table".*) from "my table";</TT
+> instead.
+     </P
+></LI
+><LI
+><P
+>      SQL functions containing utility statement may not work.
+     </P
+></LI
+><LI
+><P
+>      DML cannot be used in plpgsql functions.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="COMMAND"
+>CREATE TABLE AS EXECUTE</TT
+> is not supported.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="COMMAND"
+>WHERE CURRENT OF</TT
+> is not supported.
+     </P
+></LI
+><LI
+><P
+>      In cursors, <TT
+CLASS="COMMAND"
+>MOVE BACKWARD</TT
+> works only if <TT
+CLASS="LITERAL"
+>SCROLL</TT
+> is used in the cursor.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="LITERAL"
+>WITH HOLD</TT
+> cursors are not supported.
+     </P
+></LI
+><LI
+><P
+>      Foreign Data Wrapper is not supported.  Following related SQL statements are not supported.  
+     </P
+><P
+>      <TT
+CLASS="COMMAND"
+>CREATE FOREIGN DATA WRAPPER</TT
+>, <TT
+CLASS="COMMAND"
+>ALTER FOREIGN DATA WRAPPER</TT
+>, 
+      <TT
+CLASS="COMMAND"
+>DROP FOREIGN DATA WRAPPER</TT
+>, 
+      <TT
+CLASS="COMMAND"
+>CREATE FOREIGN TABLE</TT
+>, <TT
+CLASS="COMMAND"
+>ALTER FOREIGN TABLE</TT
+>, 
+      <TT
+CLASS="COMMAND"
+>DROP FOREING TABLE</TT
+>, 
+      <TT
+CLASS="COMMAND"
+>CREATE SERVER</TT
+>, <TT
+CLASS="COMMAND"
+>ALTER SERVER</TT
+>, <TT
+CLASS="COMMAND"
+>DROP SERVER</TT
+>, 
+      <TT
+CLASS="COMMAND"
+>CREATE USER MAPPING</TT
+>, <TT
+CLASS="COMMAND"
+>ALTER USER MAPPING</TT
+>, 
+      <TT
+CLASS="COMMAND"
+>DROP USER MAPPING</TT
+>.
+     </P
+></LI
+><LI
+><P
+>      Savepoint is not supported.  Following related SQL statements are not supported.
+     </P
+><P
+>      <TT
+CLASS="COMMAND"
+>SAVEPOINT</TT
+>, <TT
+CLASS="COMMAND"
+>RELEASE SAVEPOINT</TT
+> 
+      and <TT
+CLASS="COMMAND"
+>ROLLBACK TO SAVEPOINT</TT
+>.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="COMMAND"
+>LISTEN</TT
+>, <TT
+CLASS="COMMAND"
+>UNLISTEN</TT
+> and <TT
+CLASS="COMMAND"
+>NOTIFY</TT
+> work only locally at a coordinator.
+     </P
+></LI
+><LI
+><P
+>      SECURITY LABEL is not supported.
+     </P
+></LI
+><LI
+><P
+>      Exception block in plpgsql is not available because SAVEPOINT is not supported.
+     </P
+></LI
+><LI
+><P
+>      Distribution key of a table cannot be updated.
+     </P
+></LI
+><LI
+><P
+>      Statistics are not collected globally.   These statistic data are maintained locally to each node.
+     </P
+></LI
+><LI
+><P
+>      BARRIERs do not have timeout, meaning if a 2PC transaction is stuck forever, barrier will be stuck too.
+     </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="COMMAND"
+>CREATE TABLE SELECT</TT
+> statement will cause error 
+      if <TT
+CLASS="COMMAND"
+>SELECT</TT
+> statement involves aggregate functions 
+      such that its transition function returns different type of row from the final row.
+     </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN114306"
+>E.7.8. Issues</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>      Regression test may have random failure. 
+      You can run the regression again to see if the test is successful.
+     </P
+></LI
+><LI
+><P
+>      The following regression fails: int4, point, create_index, inherit, constraints, join, aggregates, privileges, window and plpgsql.
+     </P
+><P
+>      These failusres are not Postgres-XC bugs.   They are caused by the difference of the nature of Postgres-XC from PostgreSQL, for example, order of the selected rows, 
+      difference in planners (PGXC plan is based upon distributed query processing planning), and so on.
+     </P
+><P
+>      They will be fixed in the beta period.
+     </P
+></LI
+></UL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="release-xc-1-1-1.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="contrib.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Release 1.1.1</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="release.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Additional Supplied Modules</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,300 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Adding a New Coordinator</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.1.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Adding a New Node"
+HREF="add-node.html"><LINK
+REL="PREVIOUS"
+TITLE="Adding a New Node"
+HREF="add-node.html"><LINK
+REL="NEXT"
+TITLE="Adding a New Datanode"
+HREF="add-node-datanode.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:47:50"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.1.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Adding a New Node"
+HREF="add-node.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="add-node.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 30. Adding a New Node</TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Adding a New Datanode"
+HREF="add-node-datanode.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="ADD-NODE-COORDINATOR"
+>30.1. Adding a New Coordinator</A
+></H1
+><P
+>    Following steps should be performed to add a new coordinator to a running cluster:
+  </P
+><P
+>    <P
+></P
+></P><OL
+TYPE="1"
+><LI
+><P
+>Initialize the new coordinator. The following example initilizes a coordinator named coord_3.</P
+><PRE
+CLASS="PROGRAMLISTING"
+>          /usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data_cord3 --nodename coord_3
+        </PRE
+></LI
+><LI
+><P
+>          Make necessary changes in postgresql.conf of the new coordinator,
+          in particular specify new coordinator name and pooler port.
+        </P
+></LI
+><LI
+><P
+>          Connect to any of the existing coordinators and lock the cluster for backup, do not close this session.
+          The following example assumes a coordinator is running on port 5432. Make sure the function call returns true.
+          The detailed description of the function <CODE
+CLASS="FUNCTION"
+>pgxc_lock_for_backup</CODE
+> can be found 
+          in <A
+HREF="functions-admin.html#FUNCTIONS-PGXC-ADD-NEW-NODE"
+>Table 9-68</A
+>
+        </P
+><PRE
+CLASS="PROGRAMLISTING"
+>          ./psql postgres -p 5432
+          select pgxc_lock_for_backup();
+        </PRE
+></LI
+><LI
+><P
+>          Connect to any of the existing coordinators and take backup of the database.
+          Please note that only schema (i.e. no data) is to be dumped.
+          Also note the use of <TT
+CLASS="OPTION"
+>--include-nodes</TT
+>, so that the <TT
+CLASS="COMMAND"
+>CREATE TABLE</TT
+> contains <TT
+CLASS="COMMAND"
+>TO NODE</TT
+> clause.
+          Similarly <TT
+CLASS="OPTION"
+>--dump-nodes</TT
+> ensures that the dump does contain existing nodes and node groups.
+        </P
+><PRE
+CLASS="PROGRAMLISTING"
+>          ./pg_dumpall -p 5432 -s --include-nodes --dump-nodes --file=/some/valid/path/some_file_name.sql
+        </PRE
+></LI
+><LI
+><P
+>          Start the new coordinator specifying <TT
+CLASS="OPTION"
+>--restoremode</TT
+> while starting.
+          The following example starts the new coordinator on port 5455
+        </P
+><PRE
+CLASS="PROGRAMLISTING"
+>          ./postgres --restoremode -D ../data_cord3 -p 5455
+        </PRE
+><P
+>	     You can use <TT
+CLASS="LITERAL"
+>pg_ctl</TT
+> with <TT
+CLASS="OPTION"
+>-Z restoremode</TT
+> option.
+	    </P
+><PRE
+CLASS="PROGRAMLISTING"
+>	     ./pg_ctl start -Z restoremode -D ../data_coord3 -p 5455
+	    </PRE
+></LI
+><LI
+><P
+>          Restore the backup (taken in step 4) by connecting to the new coordinator directly.
+        </P
+><PRE
+CLASS="PROGRAMLISTING"
+>          ./psql -d postgres -f /some/valid/path/some_file_name.sql -p 5455
+        </PRE
+></LI
+><LI
+><P
+>          Quit the new coordinator.
+        </P
+></LI
+><LI
+><P
+>          Start the new coordinator specifying <TT
+CLASS="OPTION"
+>--coordinator</TT
+> while starting.
+          The following example starts the new coordinator on port 5455
+        </P
+><PRE
+CLASS="PROGRAMLISTING"
+>          ./postgres --coordinator -D ../data_cord3 -p 5455
+        </PRE
+></LI
+><LI
+><P
+>          Create the new coordinator on rest of the coordinators and reload configuration.
+          The following example creates coord_3, with host localhost and port 5455.
+        </P
+><PRE
+CLASS="PROGRAMLISTING"
+>          CREATE NODE COORD_3 WITH (HOST = 'localhost', type = 'coordinator', PORT = 5455);
+          SELECT pgxc_pool_reload();
+        </PRE
+></LI
+><LI
+><P
+>          Quit the session of step 3, this will unlock the cluster. The new coordinator is now ready.
+        </P
+></LI
+></OL
+><P>
+  </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="add-node.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="add-node-datanode.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Adding a New Node</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="add-node.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Adding a New Datanode</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

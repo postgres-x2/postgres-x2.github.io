@@ -1,0 +1,567 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Release 1.0.1</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.1.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Release Notes"
+HREF="release.html"><LINK
+REL="PREVIOUS"
+TITLE="Release 1.0.2"
+HREF="release-xc-1-0-2.html"><LINK
+REL="NEXT"
+TITLE="Release 1.0"
+HREF="release-xc-1-0.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:47:50"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.1.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Release 1.0.2"
+HREF="release-xc-1-0-2.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="release.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Appendix E. Release Notes</TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Release 1.0"
+HREF="release-xc-1-0.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="RELEASE-XC-1-0-1"
+>E.4. Release 1.0.1</A
+></H1
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Release Date: </B
+>2012-09-05</P
+></BLOCKQUOTE
+></DIV
+><P
+>   This release contains a variety of fixes from 1.0.0.
+   For information about new features in the 1.0 major release, see
+   <A
+HREF="release-xc-1-0.html"
+>Section E.5</A
+>.
+  </P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN113116"
+>E.4.1. Migration to Version 1.0.1</A
+></H2
+><P
+>    A dump/restore is not required for those running 1.0.X.
+   </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN113119"
+>E.4.2. Changes</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>      Make data ordering consistent in query for test <TT
+CLASS="FILENAME"
+>join.sql</TT
+> (Michael Paquier)
+     </P
+><P
+>      Regression test join failed occasionally depending on the cluster
+      configuration.
+     </P
+></LI
+><LI
+><P
+>      Fix for sequence removal on GTM when related database is dropped
+      (Michael Paquier, Dimitrije Radojevic)
+     </P
+><P
+>      There was an error on GTM side when comparing sequence key strings
+      related to key size when sequence drop is based on a sequence key type
+      GTM_SEQ_DB_NAME.
+     </P
+></LI
+><LI
+><P
+>      Fix for <TT
+CLASS="LITERAL"
+>INSERT SELECT</TT
+> for partially replicated tables.
+      Remote DML planning was not taking into account the node list
+      to be used on a relation when modifying data on it. (Michael Paquier)
+     </P
+></LI
+><LI
+><P
+>      Push -l option of <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+> to gtm (Michael Meskes).
+     </P
+><P
+>      This avoids to have an empty output file when <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+> has a log file defined
+      and change log file name of GTM according to what is given by <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+>
+     </P
+></LI
+><LI
+><P
+>      Fix for crash at gtm_proxy startup in 32b-linux machines (Koichi Suzuki, Plexo Rama)
+     </P
+><P
+>      This fix adds an additional boolean flag in GTM-Proxy thread info
+      to make it similar to the one used in GTM. The problem which was
+      happening was that GTM-Proxy tried to use the memory structure of
+      the thread info of GTM.
+      Crash problems are solved but we should find in the future a smarter
+      way to manage GTM and GTM-Proxy memory allocation APIs as they are
+      now strongly dependant on each other and we may find similar issues
+      if some new developments are done on GTM and/or GTM-Proxy.
+     </P
+></LI
+><LI
+><P
+>      Activate <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+> status (Koichi Suzuki, Michael Paquier)
+     </P
+><P
+>      <TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+> can control the status of a GTM server like <TT
+CLASS="COMMAND"
+>      pg_ctl</TT
+> does with <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> instances (in the case of <SPAN
+CLASS="PRODUCTNAME"
+>      Postgres-XC</SPAN
+> Coordinator and Datanode).
+     </P
+></LI
+><LI
+><P
+>      Fix for incorrect <TT
+CLASS="LITERAL"
+>COPY</TT
+> for partially distributed tables (Michael Paquier)
+     </P
+><P
+>      When a table was distributed on a portion of nodes. <TT
+CLASS="LITERAL"
+>COPY</TT
+> process
+      was not correctly choosing the output node during a <TT
+CLASS="LITERAL"
+>COPY TO</TT
+>. This
+      problem has been put into light by a case where table was replicated
+      without using the first datanode of the cluster. It happened that
+      there was the same problem for hash/modulo tables as well.
+      A test case in xc_copy has been added to cover this problem, and
+      a small portion managing <TT
+CLASS="LITERAL"
+>COPY TO</TT
+> in <TT
+CLASS="FILENAME"
+>execRemote.c</TT
+> has been cleaned.
+     </P
+></LI
+><LI
+><P
+>      Correct whitespaces, format and message format in <TT
+CLASS="FILENAME"
+>gtm_client.c</TT
+> (Andrei Martsinchyk)
+     </P
+><P
+>      This had consequences on the data types of the values sent by
+      GTM which was not matching those GTM Standby was trying to read.
+     </P
+></LI
+><LI
+><P
+>      Solve SEGENV for GTM-Standby (Andrei Martsinchyk)
+     </P
+><P
+>      Wrong variable was referenced when writing terminating null at the
+      end of a string. It caused seg faults, because the referenced variable
+      was not initialized yet.
+     </P
+></LI
+><LI
+><P
+>      Introduce new GTM thread status managing thread backup (Andrei Martsinchyk)
+     </P
+><P
+>      In the case of a GTM standby crash during the initial backup, the
+      master GTM remained locked. The origin of this problem was during
+      GTM backup process, where GTM locks all its threads one by one,
+      performs a backup and then releases everything.
+      This commit adds an additional control layer able to detect the
+      thread status during backup. The new status GTM_THREAD_BACKUP is
+      introduced for this purpose. Once backup is performed, the thread
+      status is changed to GTM_THREAD_RUNNING.
+      Hence, if the handler (GTM) is invoked upon sudden disconnection for
+      backend (here GTM-Standby) disconnect of its connection and it sees
+      that the current thread has status GTM_THREAD_BACKUP it goes ahead
+      and releases the locks.
+     </P
+></LI
+><LI
+><P
+>      Release GTM thread lock before exit (Andrei Martsinchyk)
+     </P
+><P
+>      This avoid to have another thread waiting for it, as it is possible
+      it waits for it.
+     </P
+></LI
+><LI
+><P
+>      Block GXID generation on standbys (Andrei Martsinchyk)
+     </P
+><P
+>      If a node accidentally connects to the Standby and reconnects to the
+      Master afterwards, it will get an inconsistent GXID value since GTM
+      Master is not aware of GXIDs generated by GTM Standby.
+     </P
+></LI
+><LI
+><P
+>      validate_part_col_updatable was falsely assuming that the table with no
+      location info is as good as non-existent table. This assumption is not true for
+      catalogs or coordinator only tables. In such cases, this function should not look for any
+      distribution column, since one can not exist for a table local to the
+      coordinator (Ashutosh Bapat)
+     </P
+></LI
+><LI
+><P
+>      Fix for bug 3556031: pgadmin3 connection error (Michael Paquier)
+     </P
+><P
+>      pgadmin3 parses the output of <TT
+CLASS="LITERAL"
+>SELECT version()</TT
+> to determine
+      the server version it is connecting to. For Postgres-XC, this
+      output result was changed and completed with Postgres-XC and
+      PostgreSQL version. pgadmin thought that the version of server
+      was the one of <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>, meaning 1.0 for 1.0 stable
+      and 1.1 for master branch. In consequence to that, SQL queries with
+      very old catalog were run to server, and of course errors were reported
+      to client and pgadmin could not work correctly.
+      This is solved with changing back version() to its former output.
+      An additional function <CODE
+CLASS="FUNCTION"
+>pgxc_version()</CODE
+> is added to provide a way
+      for application to inform about <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> version and
+      the <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> version it is based on.
+     </P
+></LI
+><LI
+><P
+>      Refactoring of <TT
+CLASS="FILENAME"
+>pg_regress.c</TT
+> due to bugs with O2 compilation (Michael Paquier)
+     </P
+><P
+>      When code was being compiled with O2, initialization and start-up
+      of GTM was done twice, creating errors in log files.
+      In consequence, functions related to start and initialization of
+      PGXC nodes and GTM are unified to clarify code and additional checks
+      are added to verify that nodes have been correctly started.
+     </P
+></LI
+><LI
+><P
+>      Fix compilation flag O2 not set in CFLAGS at configure step by default (Michael Paquier)
+     </P
+><P
+>      The flag -DPGXC is mandatory for correct compilation and is set once
+      all the compilation flags have been determined.
+     </P
+></LI
+><LI
+><P
+>      Block <TT
+CLASS="LITERAL"
+>EXECUTE DIRECT</TT
+> when used from a Datanode (Michael Paquier)
+     </P
+><P
+>      This caused the Datanode to crash, and it is however a functionality
+      only usable by Coordinators.
+     </P
+></LI
+><LI
+><P
+>      Fix snapshot management on slave nodes and on Datanodes accessed directly by
+      applications (Michael Paquier)
+     </P
+><P
+>      A slave node session acquires its snapshot directly from WAL like <SPAN
+CLASS="PRODUCTNAME"
+>      PostgreSQL</SPAN
+> does. Also, a Datanode is now able to get a global snapshot directly
+      from GTM, avoiding WARNING messages that a snapshot is not available.
+     </P
+><P
+>      Queries interacting with remote nodes running on slave nodes are blocked.
+      Such queries need a global snapshot and a new transaction ID, but sessions
+      on slave nodes cannot acquire that.
+     </P
+></LI
+><LI
+><P
+>      Correct query generation of <TT
+CLASS="LITERAL"
+>COPY</TT
+> with quoted table names (Nikhil Sontakke)
+     </P
+></LI
+><LI
+><P
+>      Fix race condition in GXID generation for autovacuum wraparound (Michael Paquier)
+     </P
+><P
+>      When an autovacuum wraparound begins, a global snapshot with a
+      global GXID is obtained from GTM. After getting this snapshot,
+      the code checks for wraparound conditions. Before this check, the
+      lock on GXID generation is released and then taken back. Just after
+      taking back the lock the GXID is updated to the latest value in cache.
+      However, during this time it is possible that ShmemVariableCache-&#62;nextXid
+      is updated by another local session that obtained a transaction ID
+      from GTM. GXID generation concurrency is managed globally at GTM, so we
+      cannot rely here on the local ShmemVariableCache-&#62;nextXid to update the
+      GXID of autovacuum. Updating it to a wrong value makes is async with GTM
+      information and such autovacuum is not able to gather a global snapshot
+      correctly, making the autovacuum session inconsistent with the other global
+      sessions. This could fatally crash a node under certain conditions like
+      GXID being updated concurrently by multiple sessions at the same time
+      during the wraparound condition checks.
+     </P
+></LI
+><LI
+><P
+>      Fix for <TT
+CLASS="LITERAL"
+>DDL ALTER ROLE ... REPLICATION</TT
+> not recognized (Nikhil Sontakke)
+     </P
+><P
+>      <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> 9.1 code uses the word <TT
+CLASS="LITERAL"
+>REPLICATION</TT
+> in
+      <TT
+CLASS="LITERAL"
+>ALTER TABLE</TT
+> as a portion of <TT
+CLASS="LITERAL"
+>IDENT</TT
+>. However it is a
+      reserved keyword in Postgres-XC due to its use in clause <TT
+CLASS="LITERAL"
+>DISTRIBUTE BY</TT
+>,
+      extension of <TT
+CLASS="LITERAL"
+>CREATE TABLE</TT
+> and <TT
+CLASS="LITERAL"
+>ALTER TABLE</TT
+>.
+      So here what is done is completing deparsing of <TT
+CLASS="LITERAL"
+>ALTER ROLE</TT
+> to use
+      <TT
+CLASS="LITERAL"
+>REPLICATION</TT
+> as a normal reserved keyword.
+     </P
+></LI
+><LI
+><P
+>      Fix GTM startup with "*" set as <TT
+CLASS="VARNAME"
+>listen_addresses</TT
+> on OSX (Michael Paquier)
+     </P
+><P
+>      On OSX, GTM was not able to start with default parameter values.
+      This had side effects on regressions with make check, making impossible
+      to run a simple default regression test.
+     </P
+></LI
+></UL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="release-xc-1-0-2.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="release-xc-1-0.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Release 1.0.2</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="release.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Release 1.0</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

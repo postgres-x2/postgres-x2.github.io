@@ -1,0 +1,2340 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Release 1.0</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.1.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Release Notes"
+HREF="release.html"><LINK
+REL="PREVIOUS"
+TITLE="Release 1.0.1"
+HREF="release-xc-1-0-1.html"><LINK
+REL="NEXT"
+TITLE="Release 1.1.1"
+HREF="release-xc-1-1-1.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:47:50"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.1.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Release 1.0.1"
+HREF="release-xc-1-0-1.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="release.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Appendix E. Release Notes</TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Release 1.1.1"
+HREF="release-xc-1-1-1.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="RELEASE-XC-1-0"
+>E.5. Release 1.0</A
+></H1
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Release Date: </B
+>2012-06-07</P
+></BLOCKQUOTE
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN113227"
+>E.5.1. Overview</A
+></H2
+><P
+>    <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> 1.0 is a symetric (multi-master, read and write-scalable)
+    shared-nothing cluster based on PostgreSQL. This release version is based on
+    PostgreSQL 9.1.
+   </P
+><P
+>    Currently the only architectures supported are 64 bit Linux operating systems.
+   </P
+><P
+>    This release of <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> is the first major release and
+    contains the following features, characteristics and enhancements:
+   </P
+><P
+></P
+><UL
+><LI
+><P
+>      Support and extensions for existing features of PostgreSQL in a cluster-wide environment.
+     </P
+></LI
+><LI
+><P
+>      SQL extensions and functionalities exclusive to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> for management
+      and operations related to a cluster, which add a node-level granularity for
+      cluster operations.
+     </P
+></LI
+><LI
+><P
+>      Creation of Global Transaction Manager (GTM), which is a centralized component
+      providing cluster-wide Multi-version Concurrency Control (MVCC).
+     </P
+></LI
+><LI
+><P
+>      Creation of mechanisms exclusive to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> and enhancements of existing
+      internal mechanisms of <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>, which are related to connection pooling,
+      global transaction management, query planning, rewriting, analyzing and execution.
+     </P
+></LI
+><LI
+><P
+>      Restrictions related to existing features in <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> and currently not supported by
+      <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>.
+     </P
+></LI
+></UL
+><P
+>    The above items are explained in more detail in the sections below.
+   </P
+><P
+>   The original overall architecture and design of <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> is by Koichi Suzuki, Mason Sharp,
+   Pavan Deolasee, Andrei Martsinchyk and Michael Paquier. Koichi Suzuki is the original project lead.
+  </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN113253"
+>E.5.2. Details</A
+></H2
+><P
+>    This section is divided into the following parts:
+   </P
+><P
+></P
+><UL
+><LI
+><P
+>      Existing standard features supported and related extensions
+     </P
+></LI
+><LI
+><P
+>      SQL extensions exclusive to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>
+     </P
+></LI
+><LI
+><P
+>      Internal mechanisms exclusive to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>
+     </P
+></LI
+><LI
+><P
+>      Global transaction management features
+     </P
+></LI
+><LI
+><P
+>      Restrictions
+     </P
+></LI
+></UL
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN113269"
+>E.5.2.1. Existing standard features supported and related extensions</A
+></H3
+><P
+>      This is an exhaustive list of all the features included in <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>
+      and currently supported in <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>. Some features have needed extensions.
+      In this case, the contributors are specified. If not listed in the restrictions,
+      all the <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> standard functionalities are supported and are expected to work.
+     </P
+><P
+></P
+><UL
+><LI
+><P
+>        List of all the CREATE/ALTER/DROP SQL commands supported. All the features listed
+        here work like native PostgreSQL. Extensions may have been added to make them usable
+        in a cluster environment.
+       </P
+><P
+>        <A
+HREF="sql-createuser.html"
+><TT
+CLASS="COMMAND"
+>CREATE USER</TT
+></A
+>,
+        <A
+HREF="sql-alteruser.html"
+><TT
+CLASS="COMMAND"
+>ALTER USER</TT
+></A
+>,
+        <A
+HREF="sql-dropuser.html"
+><TT
+CLASS="COMMAND"
+>DROP USER</TT
+></A
+>,
+        <A
+HREF="sql-createaggregate.html"
+><TT
+CLASS="COMMAND"
+>CREATE AGGREGATE</TT
+></A
+>,
+        <A
+HREF="sql-alteraggregate.html"
+><TT
+CLASS="COMMAND"
+>ALTER AGGREGATE</TT
+></A
+>,
+        <A
+HREF="sql-dropaggregate.html"
+><TT
+CLASS="COMMAND"
+>DROP AGGREGATE</TT
+></A
+>,
+        <A
+HREF="sql-createcollation.html"
+><TT
+CLASS="COMMAND"
+>CREATE COLLATION</TT
+></A
+>,
+        <A
+HREF="sql-altercollation.html"
+><TT
+CLASS="COMMAND"
+>ALTER COLLATION</TT
+></A
+>,
+        <A
+HREF="sql-dropcollation.html"
+><TT
+CLASS="COMMAND"
+>DROP COLLATION</TT
+></A
+>,
+        <A
+HREF="sql-createconversion.html"
+><TT
+CLASS="COMMAND"
+>CREATE CONVERSION</TT
+></A
+>,
+        <A
+HREF="sql-alterconversion.html"
+><TT
+CLASS="COMMAND"
+>ALTER CONVERSION</TT
+></A
+>,
+        <A
+HREF="sql-dropconversion.html"
+><TT
+CLASS="COMMAND"
+>DROP CONVERSION</TT
+></A
+>,
+        <A
+HREF="sql-createdatabase.html"
+><TT
+CLASS="COMMAND"
+>CREATE DATABASE</TT
+></A
+>,
+        <A
+HREF="sql-alterdatabase.html"
+><TT
+CLASS="COMMAND"
+>ALTER DATABASE</TT
+></A
+>,
+        <A
+HREF="sql-dropdatabase.html"
+><TT
+CLASS="COMMAND"
+>DROP DATABASE</TT
+></A
+>,
+        <A
+HREF="sql-alterdefaultprivileges.html"
+><TT
+CLASS="COMMAND"
+>ALTER DEFAULT PRIVILEGES</TT
+></A
+>,
+        <A
+HREF="sql-createdomain.html"
+><TT
+CLASS="COMMAND"
+>CREATE DOMAIN</TT
+></A
+>,
+        <A
+HREF="sql-alterdomain.html"
+><TT
+CLASS="COMMAND"
+>ALTER DOMAIN</TT
+></A
+>,
+        <A
+HREF="sql-dropdomain.html"
+><TT
+CLASS="COMMAND"
+>DROP DOMAIN</TT
+></A
+>,
+        <A
+HREF="sql-createfunction.html"
+><TT
+CLASS="COMMAND"
+>CREATE FUNCTION</TT
+></A
+>,
+        <A
+HREF="sql-alterfunction.html"
+><TT
+CLASS="COMMAND"
+>ALTER FUNCTION</TT
+></A
+>,
+        <A
+HREF="sql-dropfunction.html"
+><TT
+CLASS="COMMAND"
+>DROP FUNCTION</TT
+></A
+>,
+        <A
+HREF="sql-creategroup.html"
+><TT
+CLASS="COMMAND"
+>CREATE GROUP</TT
+></A
+>,
+        <A
+HREF="sql-altergroup.html"
+><TT
+CLASS="COMMAND"
+>ALTER GROUP</TT
+></A
+>,
+        <A
+HREF="sql-dropgroup.html"
+><TT
+CLASS="COMMAND"
+>DROP GROUP</TT
+></A
+>,
+        <A
+HREF="sql-createindex.html"
+><TT
+CLASS="COMMAND"
+>CREATE INDEX</TT
+></A
+>,
+        <A
+HREF="sql-alterindex.html"
+><TT
+CLASS="COMMAND"
+>ALTER INDEX</TT
+></A
+>,
+        <A
+HREF="sql-dropindex.html"
+><TT
+CLASS="COMMAND"
+>DROP INDEX</TT
+></A
+>,
+        <A
+HREF="sql-createlanguage.html"
+><TT
+CLASS="COMMAND"
+>CREATE LANGUAGE</TT
+></A
+>,
+        <A
+HREF="sql-alterlanguage.html"
+><TT
+CLASS="COMMAND"
+>ALTER LANGUAGE</TT
+></A
+>,
+        <A
+HREF="sql-droplanguage.html"
+><TT
+CLASS="COMMAND"
+>DROP LANGUAGE</TT
+></A
+>,
+        <A
+HREF="sql-createopclass.html"
+><TT
+CLASS="COMMAND"
+>CREATE OPERATOR CLASS</TT
+></A
+>,
+        <A
+HREF="sql-alteropclass.html"
+><TT
+CLASS="COMMAND"
+>ALTER OPERATOR CLASS</TT
+></A
+>,
+        <A
+HREF="sql-dropopclass.html"
+><TT
+CLASS="COMMAND"
+>DROP OPERATOR CLASS</TT
+></A
+>,
+        <A
+HREF="sql-createopfamily.html"
+><TT
+CLASS="COMMAND"
+>CREATE OPERATOR FAMILY</TT
+></A
+>,
+        <A
+HREF="sql-alteropfamily.html"
+><TT
+CLASS="COMMAND"
+>ALTER OPERATOR FAMILY</TT
+></A
+>,
+        <A
+HREF="sql-dropopfamily.html"
+><TT
+CLASS="COMMAND"
+>DROP OPERATOR FAMILY</TT
+></A
+>,
+        <A
+HREF="sql-createrole.html"
+><TT
+CLASS="COMMAND"
+>CREATE ROLE</TT
+></A
+>,
+        <A
+HREF="sql-alterrole.html"
+><TT
+CLASS="COMMAND"
+>ALTER ROLE</TT
+></A
+>,
+        <A
+HREF="sql-droprole.html"
+><TT
+CLASS="COMMAND"
+>DROP ROLE</TT
+></A
+>,
+        <A
+HREF="sql-createschema.html"
+><TT
+CLASS="COMMAND"
+>CREATE SCHEMA</TT
+></A
+>,
+        <A
+HREF="sql-alterschema.html"
+><TT
+CLASS="COMMAND"
+>ALTER SCHEMA</TT
+></A
+>,
+        <A
+HREF="sql-dropschema.html"
+><TT
+CLASS="COMMAND"
+>DROP SCHEMA</TT
+></A
+>,
+        <A
+HREF="sql-createsequence.html"
+><TT
+CLASS="COMMAND"
+>CREATE SEQUENCE</TT
+></A
+>,
+        <A
+HREF="sql-altersequence.html"
+><TT
+CLASS="COMMAND"
+>ALTER SEQUENCE</TT
+></A
+>,
+        <A
+HREF="sql-dropsequence.html"
+><TT
+CLASS="COMMAND"
+>DROP SEQUENCE</TT
+></A
+>,
+        <A
+HREF="sql-createtable.html"
+><TT
+CLASS="COMMAND"
+>CREATE TABLE</TT
+></A
+>,
+        <A
+HREF="sql-altertable.html"
+><TT
+CLASS="COMMAND"
+>ALTER TABLE</TT
+></A
+>,
+        <A
+HREF="sql-droptable.html"
+><TT
+CLASS="COMMAND"
+>DROP TABLE</TT
+></A
+>,
+        <A
+HREF="sql-createtablespace.html"
+><TT
+CLASS="COMMAND"
+>CREATE TABLESPACE</TT
+></A
+>,
+        <A
+HREF="sql-altertablespace.html"
+><TT
+CLASS="COMMAND"
+>ALTER TABLESPACE</TT
+></A
+>,
+        <A
+HREF="sql-droptablespace.html"
+><TT
+CLASS="COMMAND"
+>DROP TABLESPACE</TT
+></A
+>,
+        <A
+HREF="sql-createtsconfig.html"
+><TT
+CLASS="COMMAND"
+>CREATE TEXT SEARCH CONFIGURATION</TT
+></A
+>,
+        <A
+HREF="sql-altertsconfig.html"
+><TT
+CLASS="COMMAND"
+>ALTER TEXT SEARCH CONFIGURATION</TT
+></A
+>,
+        <A
+HREF="sql-droptsconfig.html"
+><TT
+CLASS="COMMAND"
+>DROP TEXT SEARCH CONFIGURATION</TT
+></A
+>,
+        <A
+HREF="sql-createtsdictionary.html"
+><TT
+CLASS="COMMAND"
+>CREATE TEXT SEARCH DICTIONARY</TT
+></A
+>,
+        <A
+HREF="sql-altertsdictionary.html"
+><TT
+CLASS="COMMAND"
+>ALTER TEXT SEARCH DICTIONARY</TT
+></A
+>,
+        <A
+HREF="sql-droptsdictionary.html"
+><TT
+CLASS="COMMAND"
+>DROP TEXT SEARCH DICTIONARY</TT
+></A
+>,
+        <A
+HREF="sql-createtsparser.html"
+><TT
+CLASS="COMMAND"
+>CREATE TEXT SEARCH PARSER</TT
+></A
+>,
+        <A
+HREF="sql-altertsparser.html"
+><TT
+CLASS="COMMAND"
+>ALTER TEXT SEARCH PARSER</TT
+></A
+>,
+        <A
+HREF="sql-droptsparser.html"
+><TT
+CLASS="COMMAND"
+>DROP TEXT SEARCH PARSER</TT
+></A
+>,
+        <A
+HREF="sql-createtstemplate.html"
+><TT
+CLASS="COMMAND"
+>CREATE TEXT SEARCH TEMPLATE</TT
+></A
+>,
+        <A
+HREF="sql-altertstemplate.html"
+><TT
+CLASS="COMMAND"
+>ALTER TEXT SEARCH TEMPLATE</TT
+></A
+>,
+        <A
+HREF="sql-droptstemplate.html"
+><TT
+CLASS="COMMAND"
+>DROP TEXT SEARCH TEMPLATE</TT
+></A
+>,
+        <A
+HREF="sql-createtype.html"
+><TT
+CLASS="COMMAND"
+>CREATE TYPE</TT
+></A
+>,
+        <A
+HREF="sql-altertype.html"
+><TT
+CLASS="COMMAND"
+>ALTER TYPE</TT
+></A
+>,
+        <A
+HREF="sql-droptype.html"
+><TT
+CLASS="COMMAND"
+>DROP TYPE</TT
+></A
+>,
+        <A
+HREF="sql-createuser.html"
+><TT
+CLASS="COMMAND"
+>CREATE USER</TT
+></A
+>,
+        <A
+HREF="sql-alteruser.html"
+><TT
+CLASS="COMMAND"
+>ALTER USER</TT
+></A
+>,
+        <A
+HREF="sql-dropuser.html"
+><TT
+CLASS="COMMAND"
+>DROP USER</TT
+></A
+>,
+        <A
+HREF="sql-createview.html"
+><TT
+CLASS="COMMAND"
+>CREATE VIEW</TT
+></A
+>,
+        <A
+HREF="sql-alterview.html"
+><TT
+CLASS="COMMAND"
+>ALTER VIEW</TT
+></A
+>,
+        <A
+HREF="sql-dropview.html"
+><TT
+CLASS="COMMAND"
+>DROP VIEW</TT
+></A
+>,
+        <A
+HREF="sql-createcast.html"
+><TT
+CLASS="COMMAND"
+>CREATE CAST</TT
+></A
+>,
+        <A
+HREF="sql-dropcast.html"
+><TT
+CLASS="COMMAND"
+>DROP CAST</TT
+></A
+>,
+        <A
+HREF="sql-createrule.html"
+><TT
+CLASS="COMMAND"
+>CREATE RULE</TT
+></A
+>,
+        <A
+HREF="sql-droprule.html"
+><TT
+CLASS="COMMAND"
+>DROP RULE</TT
+></A
+>,
+        <A
+HREF="sql-createtableas.html"
+><TT
+CLASS="COMMAND"
+>CREATE TABLE AS</TT
+></A
+>,
+       </P
+></LI
+><LI
+><P
+>List of other supported SQL</P
+><P
+>        <A
+HREF="sql-analyze.html"
+><TT
+CLASS="COMMAND"
+>ANALYZE</TT
+></A
+>,
+        <A
+HREF="sql-begin.html"
+><TT
+CLASS="COMMAND"
+>BEGIN</TT
+></A
+>,
+        <A
+HREF="sql-checkpoint.html"
+><TT
+CLASS="COMMAND"
+>CHECKPOINT</TT
+></A
+>,
+        <A
+HREF="sql-close.html"
+><TT
+CLASS="COMMAND"
+>CLOSE</TT
+></A
+>,
+        <A
+HREF="sql-cluster.html"
+><TT
+CLASS="COMMAND"
+>CLUSTER</TT
+></A
+>,
+        <A
+HREF="sql-comment.html"
+><TT
+CLASS="COMMAND"
+>COMMENT</TT
+></A
+>,
+        <A
+HREF="sql-commit.html"
+><TT
+CLASS="COMMAND"
+>COMMIT</TT
+></A
+>,
+        <A
+HREF="sql-commit-prepared.html"
+><TT
+CLASS="COMMAND"
+>COMMIT PREPARED</TT
+></A
+>,
+        <A
+HREF="sql-copy.html"
+><TT
+CLASS="COMMAND"
+>COPY</TT
+></A
+>,
+        <A
+HREF="sql-deallocate.html"
+><TT
+CLASS="COMMAND"
+>DEALLOCATE</TT
+></A
+>,
+        <A
+HREF="sql-declare.html"
+><TT
+CLASS="COMMAND"
+>DECLARE</TT
+></A
+>,
+        <A
+HREF="sql-delete.html"
+><TT
+CLASS="COMMAND"
+>DELETE</TT
+></A
+>,
+        <A
+HREF="sql-discard.html"
+><TT
+CLASS="COMMAND"
+>DISCARD</TT
+></A
+>,
+        <A
+HREF="sql-do.html"
+><TT
+CLASS="COMMAND"
+>DO</TT
+></A
+>,
+        <A
+HREF="sql-end.html"
+><TT
+CLASS="COMMAND"
+>END</TT
+></A
+>,
+        <A
+HREF="sql-execute.html"
+><TT
+CLASS="COMMAND"
+>EXECUTE</TT
+></A
+>,
+        <A
+HREF="sql-explain.html"
+><TT
+CLASS="COMMAND"
+>EXPLAIN</TT
+></A
+>,
+        <A
+HREF="sql-fetch.html"
+><TT
+CLASS="COMMAND"
+>FETCH</TT
+></A
+>,
+        <A
+HREF="sql-grant.html"
+><TT
+CLASS="COMMAND"
+>GRANT</TT
+></A
+>,
+        <A
+HREF="sql-insert.html"
+><TT
+CLASS="COMMAND"
+>INSERT</TT
+></A
+>,
+        <A
+HREF="sql-load.html"
+><TT
+CLASS="COMMAND"
+>LOAD</TT
+></A
+>,
+        <A
+HREF="sql-lock.html"
+><TT
+CLASS="COMMAND"
+>LOCK</TT
+></A
+>,
+        <A
+HREF="sql-move.html"
+><TT
+CLASS="COMMAND"
+>MOVE</TT
+></A
+>,
+        <A
+HREF="sql-prepare.html"
+><TT
+CLASS="COMMAND"
+>PREPARE</TT
+></A
+>,
+        <A
+HREF="sql-prepare-transaction.html"
+><TT
+CLASS="COMMAND"
+>PREPARE TRANSACTION</TT
+></A
+>,
+        <A
+HREF="sql-reassign-owned.html"
+><TT
+CLASS="COMMAND"
+>REASSIGN OWNED</TT
+></A
+>,
+        <A
+HREF="sql-reindex.html"
+><TT
+CLASS="COMMAND"
+>REINDEX</TT
+></A
+>,
+        <A
+HREF="sql-reset.html"
+><TT
+CLASS="COMMAND"
+>RESET</TT
+></A
+>,
+        <A
+HREF="sql-revoke.html"
+><TT
+CLASS="COMMAND"
+>REVOKE</TT
+></A
+>,
+        <A
+HREF="sql-rollback.html"
+><TT
+CLASS="COMMAND"
+>ROLLBACK</TT
+></A
+>,
+        <A
+HREF="sql-rollback-prepared.html"
+><TT
+CLASS="COMMAND"
+>ROLLBACK PREPARED</TT
+></A
+>,
+        <A
+HREF="sql-select.html"
+><TT
+CLASS="COMMAND"
+>SELECT</TT
+></A
+>,
+        <A
+HREF="sql-selectinto.html"
+><TT
+CLASS="COMMAND"
+>SELECT INTO</TT
+></A
+>,
+        <A
+HREF="sql-set.html"
+><TT
+CLASS="COMMAND"
+>SET</TT
+></A
+>,
+        <A
+HREF="sql-set-constraints.html"
+><TT
+CLASS="COMMAND"
+>SET CONSTRAINTS</TT
+></A
+>,
+        <A
+HREF="sql-set-role.html"
+><TT
+CLASS="COMMAND"
+>SET ROLE</TT
+></A
+>,
+        <A
+HREF="sql-set-session-authorization.html"
+><TT
+CLASS="COMMAND"
+>SET SESSION AUTHORIZATION</TT
+></A
+>,
+        <A
+HREF="sql-show.html"
+><TT
+CLASS="COMMAND"
+>SHOW</TT
+></A
+>,
+        <A
+HREF="sql-start-transaction.html"
+><TT
+CLASS="COMMAND"
+>START TRANSACTION</TT
+></A
+>,
+        <A
+HREF="sql-truncate.html"
+><TT
+CLASS="COMMAND"
+>TRUNCATE</TT
+></A
+>,
+        <A
+HREF="sql-update.html"
+><TT
+CLASS="COMMAND"
+>UPDATE</TT
+></A
+>,
+        <A
+HREF="sql-vacuum.html"
+><TT
+CLASS="COMMAND"
+>VACUUM</TT
+></A
+>,
+        <A
+HREF="sql-values.html"
+><TT
+CLASS="COMMAND"
+>VALUES</TT
+></A
+>
+       </P
+></LI
+><LI
+><P
+>        HOT-Standby and streaming replication, working as in native <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>,
+        at the Coordinator and Datanode level.
+       </P
+></LI
+><LI
+><P
+>        <SPAN
+CLASS="APPLICATION"
+>pg_dump</SPAN
+> (Michael Paquier): extension to manage table distribution type
+        in a dump.
+       </P
+></LI
+><LI
+><P
+>        <SPAN
+CLASS="APPLICATION"
+>initdb</SPAN
+> (Michael Paquier): addition of a new mandatory option <TT
+CLASS="OPTION"
+>        --nodename=<TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+></TT
+> to specify
+        a node name when initializing it. This adds a parameter (pgxc_node_name) to the
+        node's postgresql.conf file that the node uses to identify itself.
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>ORDER BY</TT
+>, <TT
+CLASS="COMMAND"
+>LIMIT</TT
+>, <TT
+CLASS="COMMAND"
+>OFFSET</TT
+> clauses:
+        those clauses can be evaluated directly on Datanodes or on Coordinators depending on how
+        query is shippable or not to remote nodes (Andrei Martsinchyk).
+       </P
+></LI
+><LI
+><P
+>        Table distribution definition (Mason Sharp, Abbas Butt, Michael Paquier): <A
+HREF="sql-createtable.html"
+>        <TT
+CLASS="COMMAND"
+>CREATE TABLE</TT
+></A
+> has been extended with <TT
+CLASS="COMMAND"
+>DISTRIBUTE BY</TT
+>
+        to be able to specify the table distribution at table creation. Distribution is tuple-based.
+        Four types are supported: replication, hash-distribution, modulo-distribution and round
+        robin.
+       </P
+><P
+>        The node list where table data is stored can also be defined with the extension <TT
+CLASS="COMMAND"
+>TO NODE</TT
+>
+        or <TT
+CLASS="COMMAND"
+>TO GROUP</TT
+>.
+       </P
+><P
+>        All the distribution data is stored in catalog <A
+HREF="catalog-pgxc-node.html"
+><TT
+CLASS="STRUCTNAME"
+>pgxc_node
+        </TT
+></A
+>.
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>JOIN</TT
+> clauses (Mason Sharp, Andrei Martsinchyk): extension to generate a remote join plan
+        depending on the quals used in queries and table distribution types. This remote join plan
+        can be reduced depending on distribution types or nodes where table data is located.
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>GROUP BY</TT
+> clause (Ashutosh Bapat): some optimizations have been added in planner to evaluate if a clause
+        can be shipped to remote nodes or not.
+       </P
+></LI
+><LI
+><P
+>        Window functions (Ashutosh Bapat): such functions are not shipped to remote nodes and are exclusively
+        evaluated on Coordinator
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>INSERT</TT
+> with multiple values (Wang Diancheng, Pavan Deolasee): this feature
+        has been extended to manage the case of distributed tables by hash, modulo or round robin.
+       </P
+></LI
+><LI
+><P
+>        Aggregate functions (Andrei Martsinchyk, Ashutosh Bapat): a collection function is determined on Coordinator to collect
+        correctly the results from Datanodes.
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>SELECT FOR UPDATE</TT
+> (Abbas Butt). The implementation is not the most performant
+        as in the case of a join on native <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>, where locks are taken on the tuples where join
+        condition is achieved, but instead locks are taken on all the tuples used to evaluate the join condition.
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>SERIAL</TT
+> types (Michael Paquier): they behave like native <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>, but an extension has been
+        added to create the table having <TT
+CLASS="COMMAND"
+>SERIAL</TT
+> columns in cluster correctly.
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>TABLESPACE</TT
+> (Michael Paquier): an extension has been made to allow nodes to share
+        the same tablespace repository even if those nodes are on the same server. It is
+        possible to use <A
+HREF="sql-executedirect.html"
+><TT
+CLASS="COMMAND"
+>EXECUTE DIRECT</TT
+></A
+>
+        with <A
+HREF="sql-createtablespace.html"
+><TT
+CLASS="COMMAND"
+>CREATE TABLESPACE</TT
+></A
+>
+        and <A
+HREF="sql-droptablespace.html"
+><TT
+CLASS="COMMAND"
+>DROP TABLESPACE</TT
+></A
+> to
+        choose the tablespace folder for each node.
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>INSERT SELECT</TT
+> (Pavan Deolasee): extensions have
+        been done to manage that for all the table distribution types.
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>PREPARE</TT
+> and <TT
+CLASS="COMMAND"
+>EXECUTE</TT
+> (Andrei Martsinchyk, Ashutosh Bapat):
+        extensions have been done to send parse and bind parameters to remote Datanodes. Those functions
+        behave like in vanilla.
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>EXPLAIN</TT
+> (Andrei Martsinchyk, Ashutosh Bapat, Michael Paquier): Addition of options to
+        print the nodes involved in query, as well as extensions to print remote queries for remote node plans.
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>COPY</TT
+> (Andrei Martsinchyk, Amit Khandekar): some extension has been
+        added to copy data to remote nodes depending on table distribution. Support for
+        <TT
+CLASS="COMMAND"
+>BINARY</TT
+> and <TT
+CLASS="COMMAND"
+>DEFAULT</TT
+> columns using non-shippable
+        expressions as default expressions are also supported.
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>CREATE TABLE AS</TT
+> and <TT
+CLASS="COMMAND"
+>SELECT INTO</TT
+> (Pavan Deolasee):
+        Support is extended with remote node planning and table distributions. Table distribution
+        can be specified for <TT
+CLASS="COMMAND"
+>CREATE TABLE AS</TT
+>. <TT
+CLASS="COMMAND"
+>SELECT INTO</TT
+>
+        uses the default distribution type, i.e distribution by hash on the first
+        column found as hashable or round robin if nothing can be used as a distribution key.
+       </P
+></LI
+><LI
+><P
+>        Session parameters (Michael Paquier): session and local parameters are all supported.
+        Those parameters are managed with connection pooling. Connections with user-customized session
+        parameters are locked in session and not pulled back to pool. When a session finishes, session
+        parameter reset is made on each connection that was used by session and then pulled back to
+        connection pool.
+       </P
+></LI
+><LI
+><P
+>        Sequence consistency in transaction blocks (Michael Paquier): As sequence values
+        are evaluated in Global Transaction Manager, a callback mechanism for the following
+        cases has been created.
+       </P
+><P
+>        <P
+></P
+></P><UL
+><LI
+><P
+>            Drop a sequence on GTM when the transaction that created this sequence aborts.
+          </P
+></LI
+><LI
+><P
+>            Drop a sequence on GTM when the transaction that dropped this sequence commits.
+          </P
+></LI
+><LI
+><P
+>            Fallback to its former name a sequence whose name has been modified in a transaction
+            that aborts.
+          </P
+></LI
+></UL
+><P>
+       </P
+></LI
+><LI
+><P
+>        System functions (Amit Khandekar and Koichi Suzuki): most of them are working like native but some extensions have been
+        added for relation-size functions (<CODE
+CLASS="FUNCTION"
+>pg_relation_size()</CODE
+>, <CODE
+CLASS="FUNCTION"
+>pg_tablespace_size()
+        </CODE
+>, <CODE
+CLASS="FUNCTION"
+>pg_database_size()</CODE
+>) and locking functions.
+       </P
+></LI
+><LI
+><P
+>        New configuration parameters in <TT
+CLASS="FILENAME"
+>postgresql.conf</TT
+>
+       </P
+><P
+>        <P
+></P
+></P><UL
+><LI
+><P
+><TT
+CLASS="VARNAME"
+>pooler_port</TT
+></P
+><P
+>Port opened by pooler to which backends can connect to communicate with</P
+></LI
+><LI
+><P
+><TT
+CLASS="VARNAME"
+>min_pool_size</TT
+></P
+><P
+>Minimum number of connections in pool</P
+></LI
+><LI
+><P
+><TT
+CLASS="VARNAME"
+>max_pool_size</TT
+></P
+><P
+>Maximum number of connections in pool</P
+></LI
+><LI
+><P
+><TT
+CLASS="VARNAME"
+>persistent_Datanode_connections</TT
+></P
+><P
+>On/off switch to make sessions keep the same connections when used.
+          This may be useful in lower concurrency environments with many session
+          parameters set.
+          </P
+></LI
+><LI
+><P
+><TT
+CLASS="VARNAME"
+>max_coordinators</TT
+></P
+><P
+>Maximum number of Coordinators that can be defined in local node</P
+></LI
+><LI
+><P
+><TT
+CLASS="VARNAME"
+>max_datanodes</TT
+></P
+><P
+>Maximum number of Datanodes that can be defined in local node</P
+></LI
+><LI
+><P
+><TT
+CLASS="VARNAME"
+>gtm_host</TT
+></P
+><P
+>Host to connect to GTM</P
+></LI
+><LI
+><P
+><TT
+CLASS="VARNAME"
+>gtm_port</TT
+></P
+><P
+>Port to connect to GTM</P
+></LI
+><LI
+><P
+><TT
+CLASS="VARNAME"
+>pgxc_node_name</TT
+></P
+><P
+>Name of the local node. This is currently set by initdb.</P
+></LI
+><LI
+><P
+><TT
+CLASS="VARNAME"
+>strict_statement_checking</TT
+></P
+><P
+>Forbid unsafe SQL</P
+></LI
+><LI
+><P
+><TT
+CLASS="VARNAME"
+>enforce_two_phase_commit</TT
+></P
+><P
+>Control parameter used for temporary objects to enforce the use of autocommit on transactions
+                that used temporary objects if disabled.</P
+></LI
+></UL
+><P>
+       </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN113669"
+>E.5.2.2. SQL extensions exclusive to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></A
+></H3
+><P
+>     This section lists all the new SQL functionalities and system functions that are exclusive to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>
+     and can be used to manage a cluster environment.
+    </P
+><P
+></P
+><UL
+><LI
+><P
+>       <A
+HREF="sql-createnode.html"
+><TT
+CLASS="COMMAND"
+>CREATE NODE</TT
+></A
+>,
+       <A
+HREF="sql-alternode.html"
+><TT
+CLASS="COMMAND"
+>ALTER NODE</TT
+></A
+>,
+       <A
+HREF="sql-dropnode.html"
+><TT
+CLASS="COMMAND"
+>DROP NODE</TT
+></A
+> (Michael Paquier, Abbas Butt)
+      </P
+><P
+>       These SQL commands are used to manage cluster node information in catalog
+       <A
+HREF="catalog-pgxc-node.html"
+><TT
+CLASS="STRUCTNAME"
+>pgxc_node</TT
+></A
+>.
+      </P
+><P
+>       These commands run only on the local node where they are run, and running them on Datanodes
+       make no sense as this catalog data is used only by Coordinator to identify remote nodes
+       and by connection pooling to get necessary remote connection information.
+      </P
+></LI
+><LI
+><P
+>       <A
+HREF="sql-createnodegroup.html"
+><TT
+CLASS="COMMAND"
+>CREATE NODE GROUP</TT
+></A
+>,
+       <A
+HREF="sql-dropnodegroup.html"
+><TT
+CLASS="COMMAND"
+>DROP NODE GROUP</TT
+></A
+> (Michael Paquier, Abbas Butt)
+      </P
+><P
+>       <TT
+CLASS="COMMAND"
+>CREATE NODE GROUP</TT
+> and <TT
+CLASS="COMMAND"
+>DROP NODE GROUP</TT
+> manage the node groups that
+       can be used when creating a table with the extension <TT
+CLASS="COMMAND"
+>TO GROUP</TT
+> of <TT
+CLASS="COMMAND"
+>CREATE TABLE</TT
+>.
+      </P
+></LI
+><LI
+><P
+>       <A
+HREF="sql-createbarrier.html"
+><TT
+CLASS="COMMAND"
+>CREATE BARRIER</TT
+></A
+> (Pavan Deolasee)
+      </P
+><P
+>       When specified with an ID, this command allows to register in all of the nodes of the cluster
+       a common and consistent time point to be able to recover all the nodes consistently back to
+       this point. Internally, a barrier is written in the WAL file of all of the nodes.
+      </P
+><P
+>       <TT
+CLASS="VARNAME"
+>recovery_target_barrier</TT
+> in <TT
+CLASS="FILENAME"
+>recovery.conf</TT
+> can be used to recover
+        a node to a given barrier ID.
+      </P
+></LI
+><LI
+><P
+>       <A
+HREF="sql-cleanconnection.html"
+><TT
+CLASS="COMMAND"
+>CLEAN CONNECTION</TT
+></A
+> (Michael Paquier)
+      </P
+><P
+>       <TT
+CLASS="COMMAND"
+>CLEAN CONNECTION</TT
+> is a connection pooling utility able to drop connections on chosen node(s)
+       for a given database or/and user.
+      </P
+></LI
+><LI
+><P
+>       <CODE
+CLASS="FUNCTION"
+>pgxc_pool_check()</CODE
+>, <CODE
+CLASS="FUNCTION"
+>pgxc_pool_reload()</CODE
+> (Michael Paquier, Abbas Butt)
+      </P
+><P
+>       Those system functions can be used to check or update the data cached in pooler with
+       <A
+HREF="catalog-pgxc-node.html"
+><TT
+CLASS="STRUCTNAME"
+>pgxc_node</TT
+></A
+>. <CODE
+CLASS="FUNCTION"
+>pgxc_pool_check()</CODE
+>
+       checks if the connection information is consistent between pooler cache and catalogs.
+       <CODE
+CLASS="FUNCTION"
+>pgxc_pool_reload()</CODE
+> updates the connection information cached in pool.
+      </P
+></LI
+><LI
+><P
+>       <A
+HREF="sql-executedirect.html"
+><TT
+CLASS="COMMAND"
+>EXECUTE DIRECT</TT
+></A
+> (Andrei Martsinchyk, Michael Paquier)
+      </P
+><P
+>       <TT
+CLASS="COMMAND"
+>EXECUTE DIRECT</TT
+> can be used to launch a query directly to a given node. Only a single node
+       can be targetted at the same time.
+      </P
+><P
+>       <TT
+CLASS="COMMAND"
+>INSERT</TT
+>, <TT
+CLASS="COMMAND"
+>UPDATE</TT
+> and <TT
+CLASS="COMMAND"
+>DELETE</TT
+> are not authorized.
+      </P
+><P
+>       Utilities are basically forbidden but some are authorized for cluster management purposes.
+      </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN113732"
+>E.5.2.3. Internal mechanisms exclusive to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></A
+></H3
+><P
+></P
+><UL
+><LI
+><P
+>       Connection pooling (Andrei Martsinchyk, Michael Paquier)
+      </P
+><P
+>       Connection pooling is added on Coordinator to dynamically manage
+       and with a minimum cost connections to remote nodes. This pooler
+       uses data of catalog <A
+HREF="catalog-pgxc-node.html"
+><TT
+CLASS="STRUCTNAME"
+>pgxc_node
+        </TT
+></A
+>. It is a separate process that is forked off of the postmaster.
+      </P
+><P
+>       Connection pools are divided per both user and database for security reasons.
+      </P
+></LI
+><LI
+><P
+>       Fast-query shipping (Mason Sharp, Ashutosh Bapat, Andrei Martsinchyk)
+      </P
+><P
+>       Fast-query shipping (FQS) is an additional planner exclusive to <SPAN
+CLASS="PRODUCTNAME"
+>       Postgres-XC</SPAN
+> designed to determine as fast as possible if a query can be
+       completely shipped to Datanodes depending on its parsed content. A fallback
+       to standard planner is made if query cannot be shipped as-is.
+      </P
+></LI
+><LI
+><P
+>       Remote query planning, standard and remote join (Mason Sharp, Andrei Martsinchyk, Pavan Deolasee, Ashutosh Bapat)
+      </P
+><P
+>       This additional planner can build a plan to replace the <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>
+       scan plan by a RemoteQuery plan able to scan remote nodes in executor. This includes
+       plans to be able to build remote joins, reducible join functionalities are also included.
+      </P
+></LI
+><LI
+><P
+>       Remote INSERT, UPDATE, DELETE planning (Pavan Deolasee, Michael Paquier)
+      </P
+><P
+>       This additional planner can be used by <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> standard planner
+       to generate plans for DML queries to remote nodes. Those plans are placed on top
+       of an inner scan plan.
+      </P
+></LI
+><LI
+><P
+>       Remode node location identification and data (Michael Paquier, Abbas Butt)
+      </P
+><P
+>       Nodes use their names as unique identifiers in the cluster and use the information
+       stored in <A
+HREF="catalog-pgxc-node.html"
+><TT
+CLASS="STRUCTNAME"
+>pgxc_node
+       </TT
+></A
+> to define the location of remote node to be used. Cluster nodes
+       can also be defined as groups stored in <A
+HREF="catalog-pgxc-group.html"
+><TT
+CLASS="STRUCTNAME"
+>pgxc_group
+       </TT
+></A
+>.
+      </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN113761"
+>E.5.2.4. Global Transaction Manager (Pavan Deolasee, with input from Koichi Suzuki and Mason Sharp)</A
+></H3
+><P
+>     Global Transaction manager (GTM) is a module exclusive to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>
+     able to maintain the same level of MVCC as vanilla <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> by
+     distributing global transaction ID and global snapshot. GTM is also used to store global
+     information about two-phase commit transactions when external application requested
+     it. Sequence information (name, values) is managed directly in GTM.
+    </P
+><P
+>     This section lists all the modules and extensions related to GTM.
+    </P
+><P
+>     <A
+HREF="app-gtm-proxy.html"
+>GTM-Proxy</A
+> can be used between <TT
+CLASS="COMMAND"
+>Postgres-XC</TT
+>
+     nodes and GTM to control the number of messages by grouping them.
+    </P
+><P
+>     <A
+HREF="app-gtm.html"
+>GTM-Standby</A
+> is a solution that prevents GTM single point
+     of failure. (Koichi Suzuki)
+    </P
+><P
+></P
+><UL
+><LI
+><P
+>       <A
+HREF="app-initgtm.html"
+><TT
+CLASS="COMMAND"
+>initgtm</TT
+></A
+> (Michael Paquier)
+      </P
+><P
+>       Module that can initialize GTM data folder. Can be used to initialize GTM or GTM-Proxy.
+      </P
+></LI
+><LI
+><P
+>       <TT
+CLASS="FILENAME"
+>gtm.conf</TT
+> (Koichi Suzuki)
+      </P
+><P
+>       Configuration file of GTM. More details about configuration parameters <A
+HREF="app-gtm.html"
+>here</A
+>.
+      </P
+></LI
+><LI
+><P
+>       <TT
+CLASS="FILENAME"
+>gtm_proxy.conf</TT
+> (Koichi Suzuki)
+      </P
+><P
+>       Configuration file of GTM Proxy. More details about configuration parameters <A
+HREF="app-gtm-proxy.html"
+>here</A
+>.
+      </P
+></LI
+><LI
+><P
+>       <A
+HREF="app-gtm-ctl.html"
+><TT
+CLASS="COMMAND"
+>gtm_ctl</TT
+></A
+>
+      </P
+><P
+>       Module similar to <TT
+CLASS="COMMAND"
+>pg_ctl</TT
+> able to control GTM, GTM-Standby and GTM-Proxy in similar ways.
+       <TT
+CLASS="COMMAND"
+>pg_ctl</TT
+> can be used to reconnect GTM-Proxy to a new GTM and to failover a GTM-Standy to become
+       a primary GTM.
+      </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN113795"
+>E.5.2.5. Restrictions</A
+></H3
+><P
+></P
+><UL
+><LI
+><P
+>List of all the unsupported SQL commands</P
+><P
+>        <A
+HREF="sql-createextension.html"
+><TT
+CLASS="COMMAND"
+>CREATE EXTENSION</TT
+></A
+>,
+        <A
+HREF="sql-alterextension.html"
+><TT
+CLASS="COMMAND"
+>ALTER EXTENSION</TT
+></A
+>,
+        <A
+HREF="sql-dropextension.html"
+><TT
+CLASS="COMMAND"
+>DROP EXTENSION</TT
+></A
+>,
+        <A
+HREF="sql-createforeigndatawrapper.html"
+><TT
+CLASS="COMMAND"
+>CREATE FOREIGN DATA WRAPPER</TT
+></A
+>,
+        <A
+HREF="sql-alterforeigndatawrapper.html"
+><TT
+CLASS="COMMAND"
+>ALTER FOREIGN DATA WRAPPER</TT
+></A
+>,
+        <A
+HREF="sql-dropforeigndatawrapper.html"
+><TT
+CLASS="COMMAND"
+>DROP FOREIGN DATA WRAPPER</TT
+></A
+>,
+        <A
+HREF="sql-createforeigntable.html"
+><TT
+CLASS="COMMAND"
+>CREATE FOREIGN TABLE</TT
+></A
+>,
+        <A
+HREF="sql-alterforeigntable.html"
+><TT
+CLASS="COMMAND"
+>ALTER FOREIGN TABLE</TT
+></A
+>,
+        <A
+HREF="sql-dropforeigntable.html"
+><TT
+CLASS="COMMAND"
+>DROP FOREIGN TABLE</TT
+></A
+>,
+        <A
+HREF="sql-alterlargeobject.html"
+><TT
+CLASS="COMMAND"
+>ALTER LARGE OBJECT</TT
+></A
+>,
+        <A
+HREF="sql-createserver.html"
+><TT
+CLASS="COMMAND"
+>CREATE SERVER</TT
+></A
+>,
+        <A
+HREF="sql-alterserver.html"
+><TT
+CLASS="COMMAND"
+>ALTER SERVER</TT
+></A
+>,
+        <A
+HREF="sql-dropserver.html"
+><TT
+CLASS="COMMAND"
+>DROP SERVER</TT
+></A
+>,
+        <A
+HREF="sql-createtrigger.html"
+><TT
+CLASS="COMMAND"
+>CREATE TRIGGER</TT
+></A
+>,
+        <A
+HREF="sql-altertrigger.html"
+><TT
+CLASS="COMMAND"
+>ALTER TRIGGER</TT
+></A
+>,
+        <A
+HREF="sql-droptrigger.html"
+><TT
+CLASS="COMMAND"
+>DROP TRIGGER</TT
+></A
+>,
+        <A
+HREF="sql-createusermapping.html"
+><TT
+CLASS="COMMAND"
+>CREATE USER MAPPING</TT
+></A
+>,
+        <A
+HREF="sql-alterusermapping.html"
+><TT
+CLASS="COMMAND"
+>ALTER USER MAPPING</TT
+></A
+>,
+        <A
+HREF="sql-dropusermapping.html"
+><TT
+CLASS="COMMAND"
+>DROP USER MAPPING</TT
+></A
+>,
+        <A
+HREF="sql-listen.html"
+><TT
+CLASS="COMMAND"
+>LISTEN</TT
+></A
+>,
+        <A
+HREF="sql-notify.html"
+><TT
+CLASS="COMMAND"
+>NOTIFY</TT
+></A
+>,
+        <A
+HREF="sql-release-savepoint.html"
+><TT
+CLASS="COMMAND"
+>RELEASE SAVEPOINT</TT
+></A
+>,
+        <A
+HREF="sql-rollback-to.html"
+><TT
+CLASS="COMMAND"
+>ROLLBACK TO SAVEPOINT</TT
+></A
+>,
+        <A
+HREF="sql-savepoint.html"
+><TT
+CLASS="COMMAND"
+>SAVEPOINT</TT
+></A
+>,
+        <A
+HREF="sql-security-label.html"
+><TT
+CLASS="COMMAND"
+>SECURITY LABEL</TT
+></A
+>,
+        <A
+HREF="sql-unlisten.html"
+><TT
+CLASS="COMMAND"
+>UNLISTEN</TT
+></A
+>,
+       </P
+></LI
+><LI
+><P
+>        Table distribution definition cannot be changed.
+       </P
+></LI
+><LI
+><P
+>        Distribution key of a table cannot be updated.
+       </P
+></LI
+><LI
+><P
+>        Utilities cannot be used in SQL functions.
+       </P
+></LI
+><LI
+><P
+>        DML cannot be used in plpgsql functions.
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>CREATE TABLE AS EXECUTE</TT
+> is not supported.
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>WHERE CURRENT OF</TT
+> is not supported.
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>RETURNING</TT
+> is not supported.
+       </P
+></LI
+><LI
+><P
+>        In cursors, <TT
+CLASS="COMMAND"
+>MOVE BACKWARD</TT
+> works only if <TT
+CLASS="COMMAND"
+>SCROLL</TT
+>
+        is used in <TT
+CLASS="COMMAND"
+>CURSOR</TT
+>
+       </P
+></LI
+><LI
+><P
+>        <TT
+CLASS="COMMAND"
+>WITH HOLD</TT
+> cursors are not supported.
+       </P
+></LI
+><LI
+><P
+>        Statictics are not managed globally. When requesting statistics
+        only the data related to node directly connected to is taken into account.
+       </P
+></LI
+><LI
+><P
+>        Barriers have no timeout functionalities, meaning that if a 2PC transaction is
+        stuck forever, barrier will be stuck too.
+       </P
+></LI
+></UL
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN113882"
+>E.5.3. Acknowledgement</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>NTT Open Source Software Center</P
+></LI
+><LI
+><P
+>EnterpriseDB</P
+></LI
+></UL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="release-xc-1-0-1.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="release-xc-1-1-1.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Release 1.0.1</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="release.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Release 1.1.1</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

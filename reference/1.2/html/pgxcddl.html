@@ -1,0 +1,506 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>pgxc_ddl</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.2.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Postgres-XC applications"
+HREF="contrib-pgxc.html"><LINK
+REL="PREVIOUS"
+TITLE="pgxc_ctl"
+HREF="pgxc-ctl.html"><LINK
+REL="NEXT"
+TITLE="pgxc_monitor"
+HREF="pgxcmonitor.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:40:50"></HEAD
+><BODY
+CLASS="REFENTRY"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.2.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="pgxc_ctl"
+HREF="pgxc-ctl.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="pgxc_ctl"
+HREF="pgxc-ctl.html"
+>Fast Backward</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="pgxc_monitor"
+HREF="pgxcmonitor.html"
+>Fast Forward</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="pgxc_monitor"
+HREF="pgxcmonitor.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="PGXCDDL"
+></A
+><SPAN
+CLASS="APPLICATION"
+>pgxc_ddl</SPAN
+></H1
+><DIV
+CLASS="REFNAMEDIV"
+><A
+NAME="AEN139117"
+></A
+><H2
+>Name</H2
+>pgxc_ddl&nbsp;--&nbsp;coordinator catalog table synchronization and DDL treatment for <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></DIV
+><DIV
+CLASS="REFSYNOPSISDIV"
+><A
+NAME="AEN139123"
+></A
+><H2
+>Synopsis</H2
+><P
+><TT
+CLASS="COMMAND"
+>pgxc_ddl</TT
+> [<TT
+CLASS="REPLACEABLE"
+><I
+>option</I
+></TT
+>...]</P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN139128"
+></A
+><H2
+>   Overview
+  </H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>XCONLY</I
+></SPAN
+>: The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>.</P
+></BLOCKQUOTE
+></DIV
+><P
+>   pgxc_ddl is a module for Coordinator catalog table synchronization and DDL treatment module.
+   It has the following synopsis.
+
+</P><PRE
+CLASS="PROGRAMLISTING"
+>pgxc_ddl [<SPAN
+CLASS="OPTIONAL"
+> <TT
+CLASS="REPLACEABLE"
+><I
+>option</I
+></TT
+> </SPAN
+>]</PRE
+><P>
+  </P
+><P
+>   pgxc_ddl is used to synchronize all Coordinator catalog tables from
+   one chosen by a user. It is also possible to launch a DDL on one
+   Coordinator, and then to synchronize all the Coordinator catalog
+   tables from the catalog table of the Coordinator having received the
+   DDL. Copy method is cold. All the Coordinators are stopped,
+   catalog files are copied, then all the Coordinators are restarted.
+  </P
+><P
+>   Since <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> 0.9.3, DDL are
+   synchronized automatically on all the nodes of the
+   cluster, <TT
+CLASS="COMMAND"
+>pgxc_ddl</TT
+> is let on purpose of future
+   feature development.
+  </P
+><P
+>   Since <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> 0.9.4, pgxc_ddl and
+   pgxc.conf are not anymore installed by default.  Scripts are saved
+   in the folder <TT
+CLASS="FILENAME"
+>contrib/pgxc_ddl</TT
+>.
+  </P
+></DIV
+><DIV
+CLASS="REFSECT1"
+><A
+NAME="AEN139145"
+></A
+><H2
+>Options</H2
+><P
+>   Options are specified with preceding '<TT
+CLASS="LITERAL"
+>-</TT
+>', each
+   option may be associated with a value.
+  </P
+><P
+>   Options are as follows:
+  </P
+><P
+>   <P
+></P
+></P><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>-D</TT
+></DT
+><DD
+><P
+>       Specify <TT
+CLASS="FILENAME"
+>pgxc.conf</TT
+> folder, for
+       characteristics of all the Coordinators.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-l</TT
+></DT
+><DD
+><P
+>       Specify application folder, in case <TT
+CLASS="VARNAME"
+>PATH</TT
+> is not defined.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-f</TT
+></DT
+><DD
+><P
+>       Specify DDL file location.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-d</TT
+></DT
+><DD
+><P
+>       Database name.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-n</TT
+></DT
+><DD
+><P
+>       Coordinator number. Coordinator chosen corresponds to the one
+       defined in <TT
+CLASS="FILENAME"
+>pgxc.conf</TT
+> at the nth place.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-t</TT
+></DT
+><DD
+><P
+>       Specify temporary folder where to copy the configuration files
+       <TT
+CLASS="FILENAME"
+>postgresql.conf</TT
+> and <TT
+CLASS="FILENAME"
+>pg_hba.conf</TT
+>
+       for each Coordinator.
+      </P
+></DD
+></DL
+></DIV
+><P>
+  </P
+><P
+>   Because <TT
+CLASS="COMMAND"
+>pgxc_ddl</TT
+> requires access to Coordinator
+   configuration file and data folders, the following parameters have
+   to be set in <TT
+CLASS="FILENAME"
+>pgxc.conf</TT
+>:
+  </P
+><DIV
+CLASS="TABLE"
+><A
+NAME="AEN139190"
+></A
+><P
+><B
+>Table G-1. <TT
+CLASS="FILENAME"
+>pgxc.conf</TT
+> entries</B
+></P
+><TABLE
+BORDER="1"
+CLASS="CALSTABLE"
+><COL><COL><COL><THEAD
+><TR
+><TH
+>Name</TH
+><TH
+>Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+><TT
+CLASS="VARNAME"
+>coordinator_ports</TT
+></TD
+><TD
+>string</TD
+><TD
+>       Specify the port number of all the Coordinators. Maintain the
+       order of the value same as those in coordinator_hosts. It is
+       necessary to specify a number of ports equal to the number of
+       hosts. A comma separator is also necessary.
+      </TD
+></TR
+><TR
+><TD
+><TT
+CLASS="VARNAME"
+>coordinator_folders</TT
+></TD
+><TD
+>string</TD
+><TD
+>       Specify the data folders of all the Coordinators. Maintain the
+       order of the value same as those in coordinator_hosts. It is
+       necessary to specify a number of data folders equal to the
+       number of hosts. A comma separator is also necessary.
+      </TD
+></TR
+><TR
+><TD
+><TT
+CLASS="VARNAME"
+>coordinator_hosts</TT
+></TD
+><TD
+>string</TD
+><TD
+>       Specify the host name or IP address of Coordinator. Separate
+       each value with comma.
+      </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>    About the temporary folder, this one has the name chosen by the
+    user. As an extension name, the PID of the shell script is
+    added. This folder is by default in <TT
+CLASS="FILENAME"
+>/tmp</TT
+>. The user can choose
+    the name freely.
+   </P
+></BLOCKQUOTE
+></DIV
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>    Configuration files of Coordinators that have their catalog files
+    changed are defined with an extension name postgresql.conf.number,
+    "number" being the number of t Coordinator in the order defined
+    in <TT
+CLASS="FILENAME"
+>pgxc.conf</TT
+>.
+   </P
+></BLOCKQUOTE
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="pgxc-ctl.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="pgxcmonitor.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="contrib-pgxc.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><SPAN
+CLASS="APPLICATION"
+>pgxc_monitor</SPAN
+></TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

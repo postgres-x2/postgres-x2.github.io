@@ -1,0 +1,3561 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>pgxc_ctl</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.1.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Additional Supplied Modules"
+HREF="contrib.html"><LINK
+REL="PREVIOUS"
+TITLE="pgxc_clean"
+HREF="pgxcclean.html"><LINK
+REL="NEXT"
+TITLE="pgxc_ddl"
+HREF="pgxcddl.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:47:50"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.1.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="pgxc_clean"
+HREF="pgxcclean.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="contrib.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Appendix F. Additional Supplied Modules</TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="pgxc_ddl"
+HREF="pgxcddl.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="PGXC-CTL"
+>F.32. pgxc_ctl</A
+></H1
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN120755"
+>F.32.1. Description</A
+></H2
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+></P
+></BLOCKQUOTE
+></DIV
+><P
+>     <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> takes care of configuration,
+     initialization, start, stop, monitor and failover of postgres-xc
+     components.  
+     Manual configuration of postgres-xc cluster is a
+     great and painful work.  
+     You should plan your postgres-xc configuration carefully.  
+     This document describes how to use
+     <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> to help these tiring work.
+    </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="R1-APP-PGXC-CTL-1"
+>F.32.2. Building and installing pgxc_ctl</A
+></H2
+><P
+>   You should build pgxc_ctl using your Postgres-XC build environment.
+   <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> source code comes with postgres-xc source code tarball.
+   Latest version of the source code will be available at its home repository,
+</P><PRE
+CLASS="PROGRAMLISTING"
+>https://github.com/koichi-szk/PGXC-Tools/tree/master/pgxc_ctl</PRE
+><P>
+   If you would like to use the latest version from pgxc_ctl home repository,
+   get the set of the source code tarball and expand it at contrib
+   directory of your Postgres-XC build environment.  
+   If you are using pgxc_ctl in postgres-xc tarball, you don't have to do this.
+  </P
+><P
+>   Before building pgxc_ctl, you should build postgres-xc binary, like
+</P><PRE
+CLASS="PROGRAMLISTING"
+>$ cd <TT
+CLASS="REPLACEABLE"
+><I
+>your postgres-xc build directory</I
+></TT
+>
+$ ./configure <TT
+CLASS="REPLACEABLE"
+><I
+>your configuration option</I
+></TT
+>
+$ make</PRE
+><P>
+
+   Please note that you dont'have to install
+   <SPAN
+CLASS="APPLICATION"
+>postgres-xc</SPAN
+> binary to build
+   <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+>.  
+   Also please note that <SPAN
+CLASS="APPLICATION"
+>postgres-xc</SPAN
+> top
+   level make and make install command does not take care of pgxc_ctl.
+   You should build and install the separately.
+  </P
+><P
+>   Then you can build pgxc_ctl as follows:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>$ cd contrib/pgxc_ctl
+$ make
+$ make install</PRE
+><P>
+   <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> binary will be installed at the
+   same directory as <SPAN
+CLASS="APPLICATION"
+>postgres-xc</SPAN
+> binaries. 
+  </P
+><P
+>   <SPAN
+CLASS="APPLICATION"
+>Postgres-XC</SPAN
+> consists of many components
+   (or called "nodes") running in various physical or virtual
+   machines.
+   Because pgxc_ctl relies on ssh connection between the machines where
+   <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> and other nodes are running,
+   you should setup ssh-agent authentication to avoid typing password
+   each time pgcx_ctl issues ssh.
+  </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN120782"
+>F.32.3. pgxc_ctl home directory</A
+></H2
+><P
+>   <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> uses its own work directory,
+   where it stores configuration files and logs, as well as other
+   resources. 
+   Default value is <TT
+CLASS="LITERAL"
+>$HOME/pgxc_ctl</TT
+> and you can
+   specify this by <TT
+CLASS="LITERAL"
+>--home</TT
+> option.
+  </P
+><P
+>   <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> home directory may be referred
+   to as <TT
+CLASS="LITERAL"
+>$PGXC_CTL_HOME</TT
+> through this manual.
+  </P
+><P
+>   You do not have to create this directory manually.   
+   <SPAN
+CLASS="APPLICATION"
+>Pgxc_ctl</SPAN
+> will create the directory when
+   it is invoked for the first time. 
+   Please note that you need appropriate privilege to create
+   <TT
+CLASS="LITERAL"
+>$PGXC_CTL_HOME</TT
+>. 
+   YOu can create this manually, of course.
+
+   For details, please refer to later sections.
+  </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN120794"
+>F.32.4. pgxc_ctl configuration file</A
+></H2
+><P
+>   pgxc_ctl uses configuration file.  
+   The default name and the location is
+   <TT
+CLASS="LITERAL"
+>$PGXC_CTL_HOME/pgxc_ctl.conf</TT
+>. 
+   When you change postgres-xc cluster configuration using pgxc_ctl
+   commands, this file will bel updated.
+   Depending upon your configuration,
+   <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> will backs up this file to 
+   the other file according to your configuration.
+  </P
+><P
+>   It could be painful to write the configuration file from the scratch.
+   <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> provides prepare command to
+   setup the prototype of this file. 
+   For details, please refer to command syntax of
+   <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+>.
+  </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN120802"
+>F.32.5. pgxc_ctl initialization file</A
+></H2
+><P
+>   You can specify your preferred parameters of pgxc_ctl behavior. 
+   You can specify parameters in <TT
+CLASS="LITERAL"
+>/etc/pgxc_ctl</TT
+>
+   and/or <TT
+CLASS="LITERAL"
+>$HOME/.pgxc_ctl</TT
+> file.
+   Setups in <TT
+CLASS="LITERAL"
+>$HOME/.pgxc_ctl</TT
+> have higher priority
+   so you can specify system-wide setups at
+   <TT
+CLASS="LITERAL"
+>/etc/pgxc_ctl</TT
+> and then your personal preferences
+   in <TT
+CLASS="LITERAL"
+>$HOME/.pgxc_ctl</TT
+>.
+  </P
+><P
+>   Format of this file will be given in the later section.
+  </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN120811"
+>F.32.6. Running  pgxc_ctl for the first time</A
+></H2
+><P
+>   Unless you build $PGXC_CTL_HOME and configuration file from the
+   scratch, you should run pgxc_ctl to build your $PGXC_CTL_HOME and
+   get a prototype of configuration file.
+   From your bash prompt, simply type
+   <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+>.
+   You will have the following prompt:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>$ pgxc_ctl
+PGXC$ </PRE
+><P>
+   You will get the default prompt, which you can modify at any time
+   through initialization files.
+  </P
+><P
+>   Try to type <TT
+CLASS="LITERAL"
+>pwd</TT
+>.
+   You will get what is your <TT
+CLASS="LITERAL"
+>$PGXC_CTL_HOME</TT
+> is.
+</P><PRE
+CLASS="PROGRAMLISTING"
+>$ pgxc_ctl
+PGXC$ pwd
+/home/koichi/pgxc_ctl
+PGXC$</PRE
+><P>
+   If you specify <TT
+CLASS="OPTION"
+>--home</TT
+> option with another
+   directory, <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> will start at this
+   directory, after building it if needed.
+</P><PRE
+CLASS="PROGRAMLISTING"
+>$ pgxc_ctl --home /home/koichi/my_pgxc_ctl
+PGXC$ pwd
+/home/koichi/my_pgxc_ctl
+PGXC$</PRE
+><P>
+   You can specify your pgxc_ctl_home as environment variable
+   <TT
+CLASS="LITERAL"
+>PGXC_CTL_HOME</TT
+>, or you can specify this as
+   variable <TT
+CLASS="LITERAL"
+>pgxc_ctl_home</TT
+> in your initialization
+   files.
+  </P
+><P
+>   Command line option has the highest priority, then the environment,
+   <TT
+CLASS="LITERAL"
+>$HOME/.pgxc_ctl</TT
+> and
+   <TT
+CLASS="LITERAL"
+>/etc/pgxc_ctl</TT
+>. 
+  </P
+><P
+>   Type prepare or prepare config to get a configuration template file
+   <TT
+CLASS="FILENAME"
+>pgxc_ctl.conf</TT
+> at
+   <TT
+CLASS="LITERAL"
+>$PGXC_CTL_HOME</TT
+>.
+   You may add file name as an option to get configuration template in
+   your favorite file.  For example:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>PGXC$ prepare
+PGXC$</PRE
+><P>
+or 
+</P><PRE
+CLASS="PROGRAMLISTING"
+>PGXC$ prepare config my_pgxc.conf
+PGXC$</PRE
+><P>
+   Detailed syntax of the command will be given in later section.
+  </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN120833"
+>F.32.7. Make your configuration</A
+></H2
+><P
+>   Please take a look at the template of the configuration file you
+   created as in the previous section.
+   This file is actually a bash script file to setup various bash
+   script variables which are passed to pgxc_ctl next time you run
+   it.
+  </P
+><P
+>   <SPAN
+CLASS="APPLICATION"
+>Postgres-xc</SPAN
+> configuration needs to
+   specify same or similar values to each node configuration, for
+   example, work directory, port, etc.
+   To avoid trivial error, you can specify such same value as your
+   favorite variables and refer to them in each variable setups.
+  </P
+><P
+>   For example, a part of your template may look like this:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>#---- Shortcuts ------
+gtmProxyDir=$HOME/pgxc/nodes/gtm_pxy
+
+#---- Overall -------
+gtmProxy=y              # Specify y if you configure at least one GTM 
+                        # proxy.
+                        # You may not configure gtm proxies only when
+                        # you dont' configure GTM slaves. 
+                        # If you specify this value not to y, the
+                        # following parameters will be set to default
+                        # empty values.  
+                        # If we find there're no valid Proxy server
+                        # names (means, every servers are specified 
+                        # as none), then gtmProxy value will be set to
+                        # "n" and all the entries will be set to empty
+                        # values. 
+gtmProxyNames=(gtm_pxy1 gtm_pxy2 gtm_pxy3 gtm_pxy4) # No used if it is not configured
+gtmProxyServers=(node06 node07 node08 node09)       # Specify none if you dont' configure it.
+gtmProxyPorts=(20001 20001 20001 20001)             # Not used if it is not configured.
+gtmProxyDirs=($gtmProxyDir $gtmProxyDir $gtmProxyDir $gtmProxyDir)  # Not used if it is not configured.</PRE
+><P>
+   This is a section to specify gtm proxy setups.
+   We have four <TT
+CLASS="LITERAL"
+>gtm proxies</TT
+> in each of the server.
+   They share working directory path and is specified as a shortcut
+   which is referred to later.
+  </P
+><P
+>   You can do all these in any part of the configuration file.
+  </P
+><P
+>   Please note that the working directory of this script is
+   <TT
+CLASS="FILENAME"
+>$PGXC_CTL_HOME</TT
+>, unless you change it explicitly
+   in this configuration file. 
+  </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN120844"
+>F.32.8. pgxc_ctl invocation options</A
+></H2
+><P
+>   When you invoke pgxc_cmd from your shell,
+   <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> accepts several options to
+   control its behavior.
+   <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> command format is as follows:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>pgxc [options ... ] [pgxc_command]</PRE
+><P>
+  </P
+><P
+>   Options are as follows:
+  </P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>-c <TT
+CLASS="REPLACEABLE"
+><I
+>configuration_file</I
+></TT
+></TT
+><BR><TT
+CLASS="OPTION"
+>--configuration <TT
+CLASS="REPLACEABLE"
+><I
+>configuration_file</I
+></TT
+></TT
+></DT
+><DD
+><P
+>       Specifies configuration file.
+       The default is <TT
+CLASS="FILENAME"
+>pgxc_ctl_conf</TT
+>, or the value
+       of <TT
+CLASS="LITERAL"
+>configFile</TT
+> option
+       found in the initialization file.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>--home <TT
+CLASS="REPLACEABLE"
+><I
+>home_directory</I
+></TT
+></TT
+></DT
+><DD
+><P
+>       Specifies <TT
+CLASS="FILENAME"
+>$PGXC_CTL_HOME</TT
+> directory.
+       You can specify this as <TT
+CLASS="LITERAL"
+>pgxc_ctl_home</TT
+>
+       variable in the initialization file.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-i <TT
+CLASS="REPLACEABLE"
+><I
+>file</I
+></TT
+></TT
+><BR><TT
+CLASS="OPTION"
+>--infile <TT
+CLASS="REPLACEABLE"
+><I
+>file</I
+></TT
+></TT
+></DT
+><DD
+><P
+>       Specifies where to read pgxc_ctl commands.
+       There's not corresponding variables in the initialization file.
+       Default is the standard input.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-L <TT
+CLASS="REPLACEABLE"
+><I
+>logfile</I
+></TT
+></TT
+><BR><TT
+CLASS="OPTION"
+>--logfile <TT
+CLASS="REPLACEABLE"
+><I
+>logfile</I
+></TT
+></TT
+></DT
+><DD
+><P
+>       Specifies where to write the log.
+       The path is relative to <TT
+CLASS="FILENAME"
+>$PGXC_CTL_HOME</TT
+> or
+       the value of log directory specified as <TT
+CLASS="OPTION"
+>-l</TT
+>
+       option or <TT
+CLASS="LITERAL"
+>logDir</TT
+> variable in the
+       initialization file, if specified.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-l <TT
+CLASS="REPLACEABLE"
+><I
+>logdir</I
+></TT
+></TT
+><BR><TT
+CLASS="OPTION"
+>--logdir <TT
+CLASS="REPLACEABLE"
+><I
+>logdir</I
+></TT
+></TT
+></DT
+><DD
+><P
+>       Specifies the directory of the log file.
+       Default is <TT
+CLASS="FILENAME"
+>$PGXC_HOME/pgxc_log/</TT
+>.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-o <TT
+CLASS="REPLACEABLE"
+><I
+>outfile</I
+></TT
+></TT
+><BR><TT
+CLASS="OPTION"
+>--out-file <TT
+CLASS="REPLACEABLE"
+><I
+>outfile</I
+></TT
+></TT
+></DT
+><DD
+><P
+>       Specifies where to write <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> output.
+       Default is the standard output.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>--silent</TT
+></DT
+><DD
+><P
+>       Specifies to run <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> without
+       printing messages as much as possible.
+       This value can also be set as variable
+       <TT
+CLASS="LITERAL"
+>verbose</TT
+> in the initialization file.
+       You can setup level of messages <TT
+CLASS="LITERAL"
+>logMessage</TT
+>
+       and <TT
+CLASS="LITERAL"
+>printMessage</TT
+> variables in the
+       initialization file as well.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-V</TT
+><BR><TT
+CLASS="OPTION"
+>--version</TT
+></DT
+><DD
+><P
+>       Prints <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> version and exits.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>-v</TT
+><BR><TT
+CLASS="OPTION"
+>--verbose</TT
+></DT
+><DD
+><P
+>       Specifies to run pgxc_ctl to print as many messages as
+       possible.
+      </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN120936"
+>F.32.9. pgxc_ctl initialization file</A
+></H2
+><P
+>   As described in previous sections, pgxc_ctl behavior, as specified
+   in the command line options, can be specified in advance in the
+   initialization file <TT
+CLASS="FILENAME"
+>/etc/pgxc_ctl</TT
+> or
+   <TT
+CLASS="FILENAME"
+>$HOME/.pgxc_ctl</TT
+>.
+  </P
+><P
+>   The syntax is as follows:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>name value [ value ... ] # comment</PRE
+><P>
+  </P
+><P
+>   Blank lines or lines beginning with '#' are simply ignored.  If
+   you'd like to include space or tab in the variable name, enclose
+   the name with <TT
+CLASS="LITERAL"
+>'...'</TT
+> or <TT
+CLASS="LITERAL"
+>"..."</TT
+>.
+  </P
+><P
+>   Please note that this file is not a bash script.
+  </P
+><P
+>   List of the name and their value is as follows:
+  </P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>configFile <TT
+CLASS="REPLACEABLE"
+><I
+>filename</I
+></TT
+></TT
+></DT
+><DD
+><P
+>      Specify the configuration file name.
+      Default is <TT
+CLASS="FILENAME"
+>pgxc_ctl.conf</TT
+>.
+      This option can be overridden by <TT
+CLASS="OPTION"
+>-c</TT
+> command
+      line option.
+     </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>localTmpDir <TT
+CLASS="REPLACEABLE"
+><I
+>dirname</I
+></TT
+></TT
+></DT
+><DD
+><P
+>      Specify remote temporary directory, default is <TT
+CLASS="FILENAME"
+>/tmp</TT
+>.
+     </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>logDir <TT
+CLASS="REPLACEABLE"
+><I
+>dirname</I
+></TT
+></TT
+></DT
+><DD
+><P
+>      Specifies the directory to write log.  Can be overridden by
+      <TT
+CLASS="OPTION"
+>-l</TT
+> command line option.
+     </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>logFile <TT
+CLASS="REPLACEABLE"
+><I
+>filename</I
+></TT
+></TT
+></DT
+><DD
+><P
+>      Specifies the log file name, which is relative to
+      <TT
+CLASS="FILENAME"
+>$PGXC_CTL_HOME/pgxc_log</TT
+> or value of
+      <TT
+CLASS="LITERAL"
+>logDir</TT
+> variable.
+      Can be overridden by <TT
+CLASS="OPTION"
+>-L,</TT
+> command line option.
+     </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>logMessage <TT
+CLASS="REPLACEABLE"
+><I
+>msglevel</I
+></TT
+></TT
+></DT
+><DD
+><P
+>       Specifies the message level to print to the terminal or output
+       file.
+       Valid value is <TT
+CLASS="LITERAL"
+>MANDATORY</TT
+>,
+       <TT
+CLASS="LITERAL"
+>PANIC</TT
+>, <TT
+CLASS="LITERAL"
+>ERROR</TT
+>,
+       <TT
+CLASS="LITERAL"
+>WARNING</TT
+>, <TT
+CLASS="LITERAL"
+>NOTICE</TT
+>,
+       <TT
+CLASS="LITERAL"
+>NOTICE2</TT
+>, <TT
+CLASS="LITERAL"
+>INFO</TT
+>,
+       <TT
+CLASS="LITERAL"
+>DEBUG1</TT
+>, <TT
+CLASS="LITERAL"
+>DEBUG2</TT
+>, or
+       <TT
+CLASS="LITERAL"
+>DEBUG3</TT
+>. Default is
+       <TT
+CLASS="LITERAL"
+>NOTICE</TT
+>.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>pgxc_ctl_home <TT
+CLASS="REPLACEABLE"
+><I
+>dirname</I
+></TT
+></TT
+></DT
+><DD
+><P
+>       Specifies <TT
+CLASS="FILENAME"
+>$PGXC_CTL_HOME</TT
+>.
+       Default is <TT
+CLASS="FILENAME"
+>$HOME/pgxc_ctl</TT
+> or environment
+       variable <TT
+CLASS="LITERAL"
+>$PGXC_CTL_HOME</TT
+>.
+       Can be overriden by <TT
+CLASS="OPTION"
+>--home</TT
+> command line option.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>printMessage <TT
+CLASS="REPLACEABLE"
+><I
+>msglevel</I
+></TT
+></TT
+></DT
+><DD
+><P
+>       Specifies the message level to print to the log file.
+       Valid value is <TT
+CLASS="LITERAL"
+>MANDATORY</TT
+>,
+       <TT
+CLASS="LITERAL"
+>PANIC</TT
+>, <TT
+CLASS="LITERAL"
+>ERROR</TT
+>,
+       <TT
+CLASS="LITERAL"
+>WARNING</TT
+>, <TT
+CLASS="LITERAL"
+>NOTICE</TT
+>,
+       <TT
+CLASS="LITERAL"
+>NOTICE2</TT
+>, <TT
+CLASS="LITERAL"
+>INFO</TT
+>,
+       <TT
+CLASS="LITERAL"
+>DEBUG1</TT
+>, <TT
+CLASS="LITERAL"
+>DEBUG2</TT
+>, or
+       <TT
+CLASS="LITERAL"
+>DEBUG3</TT
+>. Default is
+       <TT
+CLASS="LITERAL"
+>NOTICE</TT
+>.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>tmpDir <TT
+CLASS="REPLACEABLE"
+><I
+>dirname</I
+></TT
+></TT
+></DT
+><DD
+><P
+>       Specify local temporary directory, default is <TT
+CLASS="FILENAME"
+>/tmp</TT
+>.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>verbose <TT
+CLASS="REPLACEABLE"
+><I
+>value</I
+></TT
+></TT
+></DT
+><DD
+><P
+>       Specifies verbose message output from
+       <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+>.
+       Value should be <TT
+CLASS="LITERAL"
+>y</TT
+> or <TT
+CLASS="LITERAL"
+>n</TT
+>.
+       Can be overridedn by <TT
+CLASS="OPTION"
+>-v</TT
+> or
+        <TT
+CLASS="OPTION"
+>--silent</TT
+> command line option.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>xc_prompt <TT
+CLASS="REPLACEABLE"
+><I
+>prompt</I
+></TT
+></TT
+></DT
+><DD
+><P
+>       Specifies pgxc_prompt.  Default is <TT
+CLASS="LITERAL"
+>'PGXC$ '</TT
+>.
+      </P
+></DD
+></DL
+></DIV
+><P
+>    Typical example of this initialization file will be as follows:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>$ cat ~/.pgxc_ctl
+xc_prompt 'PGXC$ '
+verbose y
+logMessage 'DEBUG3'
+printMessage 'DEBUG1'
+printLocation y
+$</PRE
+><P>
+
+  </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN121051"
+>F.32.10. Postgres-XC basics and its resources</A
+></H2
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="R2-APP-PGXC-CTL-CONFIGURATION"
+>F.32.10.1. Postgres-XC components</A
+></H3
+><P
+>    Postgres-xc consists of the following components.  Each component may
+    be called <TT
+CLASS="OPTION"
+>node</TT
+>, which may not necessarily refer
+    to physical or virtual server because you can configure more
+    than one node to one physical/virtual server.  
+    You should consider how many of them to configure.
+    Hereafter, we call such physical/virtual server as
+    <TT
+CLASS="OPTION"
+>host</TT
+>.
+   </P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+>GTM</DT
+><DD
+><P
+>       GTM stands for global transaction manager.
+       You must have one in the cluster.
+       For production, GTM should be configured in a separate server.
+       GTM can have a slave which can fail over when GTM fails.
+       GTM slave can be installed (hopefully) in a separate server but
+       can be installed in one of the others where you have gtm_proxy,
+       coordinators and datanodes.
+      </P
+></DD
+><DT
+>GTM-Proxy</DT
+><DD
+><P
+>       GTM proxy reduces the communication load between coordinator and
+       GTM and helps GTM failover.
+       You should configure one gtm_proxy in each server where you have
+       coordinator or datanode as described below.
+      </P
+></DD
+><DT
+>Coordinator</DT
+><DD
+><P
+>       Coordinator handles application connection and statement
+       handling.
+       For simplicity and load balancing, it is a good idea to
+       install coordinator to each server other than where GTM (and GTM
+       slave) are configured.  Coordinator can have a slave.  Slave can
+       be configured in one of the servers where other coordinator
+       master is installed.
+      </P
+></DD
+><DT
+>Datanode</DT
+><DD
+><P
+>       Datanode stores the data and run local SQL statement supplied by
+       a coordinator.  Datanode should also be configured in all the
+       servers except those for GTM (and GTM slave).
+      </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN121075"
+>F.32.10.2. Common resource assignment and configuration practice</A
+></H3
+><P
+>    Each component requires the following resources:
+     
+    <P
+></P
+></P><UL
+><LI
+><P
+>       hostname, IP address or host name you can refer through DNS,
+       <TT
+CLASS="FILENAME"
+>/etc/hosts</TT
+> or by equivalent means. 
+      </P
+></LI
+><LI
+><P
+>       port
+      </P
+></LI
+><LI
+><P
+>       work directory
+      </P
+></LI
+></UL
+><P>
+   </P
+><P
+>    Also, coordinator needs additional port for connection pooling to
+    other nodes.
+   </P
+><P
+>    In the same host, you must not assign the same port and the same
+    work directory to nodes.
+    <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> checks this.
+   </P
+><P
+>    When assign the port, you should be careful not to assign already
+    assigned one to other service. 
+   </P
+><P
+>    Also, please note the following:
+    <P
+></P
+></P><UL
+><LI
+><P
+>       You should not assign the same port to GTM master and GTM
+       slave. 
+      </P
+></LI
+><LI
+><P
+>       Coordinator master and coordinator slave must share the same
+       port, at different hosts.
+      </P
+></LI
+><LI
+><P
+>       Datanode master and datanode slave must share the same port, at
+       different hosts. 
+      </P
+></LI
+></UL
+><P>
+   </P
+><P
+>    Please note that the last two are not required by
+    <SPAN
+CLASS="APPLICATION"
+>postgres-xc</SPAN
+> but requirement of
+    <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+>.
+   </P
+><P
+>    GTM, coordinators and datanodes can configure their slave.
+    <SPAN
+CLASS="APPLICATION"
+>Pgxc_ctl</SPAN
+> does not support cascaded
+    slave or more than one slave for coordinator and datanode.
+    It is not a restriction of <SPAN
+CLASS="APPLICATION"
+>postgres-XC</SPAN
+>,
+    it is a restriction of <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+>.
+   </P
+><P
+>    At present, coordinator and datanode slaves are connected using
+    synchronous replication in pgxc_ctl.  
+    This is not a <SPAN
+CLASS="APPLICATION"
+>Posgres-XC</SPAN
+> restriction
+    either.
+    In the future, asynchronous, cascaded and multiple slaves may be
+    supported.
+   </P
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN121107"
+>F.32.11. Configuration</A
+></H2
+><P
+>   As described in the previous section, you can configure your
+   <SPAN
+CLASS="APPLICATION"
+>postgres-xc</SPAN
+> cluster by editing
+   <TT
+CLASS="FILENAME"
+>pgxc_ctl.conf</TT
+> or other configuration files
+   manually.
+   But editing the file from the scratch can be a mess.
+   It is much better to have separate configuration file.
+   You can create configuration file template by typing
+
+</P><PRE
+CLASS="PROGRAMLISTING"
+>PGXC$ prepare config
+PGXC$ </PRE
+><P>
+  </P
+><P
+>   You have your <TT
+CLASS="FILENAME"
+>pgxc_ctl.conf</TT
+> file at
+   <TT
+CLASS="FILENAME"
+>$HOME/pgxc_ctl</TT
+>.
+   You can edit it to configure your
+   <SPAN
+CLASS="APPLICATION"
+>postgres-xc</SPAN
+> cluster.
+   When it messes up, you can again create the template with
+   <TT
+CLASS="COMMAND"
+>prepare config</TT
+> command.
+   If you want to use other file name, specify the names
+   <TT
+CLASS="COMMAND"
+>prepare config</TT
+> command option like:
+
+</P><PRE
+CLASS="PROGRAMLISTING"
+>PGXC$ prepare config my_config.conf</PRE
+><P>
+  </P
+><P
+>   Then you can edit this file to configure you
+   <SPAN
+CLASS="APPLICATION"
+>postgres-XC</SPAN
+> cluster. 
+   This file is actually a bash script file defining many variables
+   to define the cluster configuration.
+   With template values and comments, it will be easy to understand
+   what they mean.
+   The following describes each variable in the order you find in the
+   configuration template. 
+  </P
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN121122"
+>F.32.11.1. Overall</A
+></H3
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>configBackup</TT
+></DT
+><DD
+><P
+>       Option if you backup the configuration file to a remote
+       server. Specify <TT
+CLASS="LITERAL"
+>y</TT
+> if you'd like to backup the
+       configuration file.   <TT
+CLASS="LITERAL"
+>n</TT
+> otherwise.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>configBackupFile</TT
+></DT
+><DD
+><P
+>       Name of the configuration backup file.
+       Effective when configuration file backup is enabled.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>configBackupHost</TT
+></DT
+><DD
+><P
+>       Host name (or IP address) where you backup the
+       configuration file.   Effective when configuration file
+       backup is enabled.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>localTmpDir</TT
+></DT
+><DD
+><P
+>       Local directory used by pgxc_ctl itself.
+       You need full access to this directory.
+      </P
+><P
+>       This parameter was left here to make it compatible with
+       bash-version.
+       It is recommended to configure this parameter in
+       initialization file.
+      </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>pgxcInstallDir</TT
+></DT
+><DD
+><P
+>         <SPAN
+CLASS="APPLICATION"
+>Postgres-XC</SPAN
+> should at least be
+        installed in the server you are running
+        <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+>.
+        This variable specifies this installation directory, as you
+        specify with <TT
+CLASS="OPTION"
+>--prefix=</TT
+> option of configure
+        command when you build it.
+        All the installation will be copied to the same directory at
+        each servers and you should give appropriate privilege to this
+        directory in advance.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>pgxcOwner</TT
+></DT
+><DD
+><P
+>        Name of the database user who owns whole
+        <SPAN
+CLASS="APPLICATION"
+>Postgres-XC</SPAN
+> database.
+        This can be different from $pgxcUser.
+        In the present version, we assume these two should be the same
+        though.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>pgxcUser</TT
+></DT
+><DD
+><P
+>        Name of the operating system user you are logging in as
+        postgres-xc owner.   At present, this should be the same as
+        <TT
+CLASS="LITERAL"
+>$pgxcOwner</TT
+>.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>tmpDir</TT
+></DT
+><DD
+><P
+>        Directory used for work at each server except for the one
+        pgxc_ctl runs.  You need full access to this directory at 
+        all the servers.
+       </P
+><P
+>        This parameter was left here to make it compatible with
+        bash-version.
+        It is recommended to configure this parameter in
+        initialization file.
+       </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN121174"
+>F.32.11.2. GTM</A
+></H3
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>gtmName</TT
+></DT
+><DD
+><P
+>        Node name of GTM.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmExtraConfig</TT
+></DT
+><DD
+><P
+>        If you'd like to add specific configuration to both GTM master
+        and slave, specify the file which contains such lines for
+        gtm.config file.
+        Otherwise, specify <TT
+CLASS="LITERAL"
+>none</TT
+>.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmMasterDir</TT
+></DT
+><DD
+><P
+>        Work directory for GTM master.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmMasterPort</TT
+></DT
+><DD
+><P
+>        Listening port number of GTM master.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmMasterServer</TT
+></DT
+><DD
+><P
+>        Host name where GTM master runs.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmMasterSpecificExtraConfig</TT
+></DT
+><DD
+><P
+>        If you'd like to add specific configuration only to GTM
+        master, specify the file which contains such lines for
+        <TT
+CLASS="FILENAME"
+>gtm.config</TT
+> file.
+        Otherwise, specify <TT
+CLASS="LITERAL"
+>none</TT
+>
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmSlave</TT
+></DT
+><DD
+><P
+>        Option to enable GTM slave.
+        Specify <TT
+CLASS="LITERAL"
+>y</TT
+> to enable, <TT
+CLASS="LITERAL"
+>n</TT
+>
+        otherwise.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmSlaveDir</TT
+></DT
+><DD
+><P
+>        Work directory for GTM slave.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmSlavePort</TT
+></DT
+><DD
+><P
+>        Listening port number of GTM slave.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmSlaveServer</TT
+></DT
+><DD
+><P
+>        Host name where GTM slave runs.  Effective only when GTM slave is effective.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmSlaveSpecificExtraConfig</TT
+></DT
+><DD
+><P
+>        If you'd like to add specific configuration only to GTM slave,
+        specify the file which contains such lines for
+        <TT
+CLASS="FILENAME"
+>gtm.config</TT
+> file.
+        Otherwise, specify <TT
+CLASS="LITERAL"
+>none</TT
+>.
+       </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN121239"
+>F.32.11.3. GTM Proxy</A
+></H3
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>gtmProxy</TT
+></DT
+><DD
+><P
+>        This specifies if you configure any GTM proxy in your
+        <SPAN
+CLASS="APPLICATION"
+>postgres-xc</SPAN
+> cluster.
+        Specify the value <TT
+CLASS="LITERAL"
+>y</TT
+> if you configure gtm
+        proxy in your <SPAN
+CLASS="APPLICATION"
+>postgres-xc</SPAN
+> cluster.
+        Otherwise specify <TT
+CLASS="LITERAL"
+>n</TT
+>.
+        If you specify <TT
+CLASS="LITERAL"
+>n</TT
+>, all the other parameters
+        for gtm_proxy will be ignored.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmProxyDir</TT
+></DT
+><DD
+><P
+>        This is a shortcut used to assign same work directory to all
+        the GTM proxies.
+        You don't have to worry about it when you specify these values
+        manually.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmProxyDirs</TT
+></DT
+><DD
+><P
+>        Specify work directory for each GTM proxy.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmPxyExtraConfig</TT
+></DT
+><DD
+><P
+>        If you'd like to add configuration value to all the GTM proxy,
+        specify the file name which contains such lines for
+        <TT
+CLASS="FILENAME"
+>gtm_proxy.conf</TT
+>.
+        Otherwise specify <TT
+CLASS="LITERAL"
+>none</TT
+>.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmProxyNames</TT
+></DT
+><DD
+><P
+>        Specify unique name for each GTM proxy.
+        This is an array.
+        In the template, we have four servers for coordinator and
+        datanode and we have four gtm proxy as well.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmProxyPorts</TT
+></DT
+><DD
+><P
+>        Specify listening port number for each GTM proxy.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmProxyServers</TT
+></DT
+><DD
+><P
+>        Specify host name where each of the GTM Proxy runs.
+        Specify server name as the same order as <TT
+CLASS="LITERAL"
+>$gtmProxyNames</TT
+>.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>gtmPxySpecificExtraConfig</TT
+></DT
+><DD
+><P
+>        If you'd like to add specific configuration value to each GTM
+        proxy, specify file names with  such lines for
+        <TT
+CLASS="FILENAME"
+>gtm_proxy.conf</TT
+>.
+        Otherwise specify <TT
+CLASS="LITERAL"
+>none</TT
+>.
+       </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN121292"
+>F.32.11.4. Coordinators</A
+></H3
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>coordArchLogDir</TT
+></DT
+><DD
+><P
+>        Shortcut to assign the same WAL archive directory to all the
+        coordinator slaves.
+        Not needed if you specify these manually.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordArchLogDirs</TT
+></DT
+><DD
+><P
+>        Array of WAL archive log directory for each datanode slave.
+        If you don't configure coordinator slaves and specify
+        coordSlave variable value to <TT
+CLASS="LITERAL"
+>n</TT
+>, you don't
+        have to worry about this variable.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordExtraConfig</TT
+></DT
+><DD
+><P
+>        If you would like to add extra configuration value for all the
+        coordinators, specify the file name containing such lines for
+        <TT
+CLASS="FILENAME"
+>postgresql.conf</TT
+>.
+        Specify <TT
+CLASS="LITERAL"
+>none</TT
+> otherwise.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordExtraPgHba</TT
+></DT
+><DD
+><P
+>        File name which contains entries of
+        <TT
+CLASS="FILENAME"
+>pg_hba.conf</TT
+> file for all the
+        coordinators.
+        Specify <TT
+CLASS="LITERAL"
+>none</TT
+> if you do not have such file.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordMasterDir</TT
+></DT
+><DD
+><P
+>        Shortcut to assign the same work directory to all the
+        coordinator masters.
+        Not needed if you specify these manually.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordMasterDirs</TT
+></DT
+><DD
+><P
+>        Array of coordinator master work directory.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordMasterServers</TT
+></DT
+><DD
+><P
+>        Array of the host name where each coordinator master runs.
+        Specify in the order of <TT
+CLASS="OPTION"
+>coordNames</TT
+> above.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordMaxWalSender</TT
+></DT
+><DD
+><P
+>        Shortcut to assign the same value to each member of
+        <TT
+CLASS="OPTION"
+>coordMaxWalSenders</TT
+>.  Not needed if you assign the value
+          manually.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordMaxWalSenders</TT
+></DT
+><DD
+><P
+>        Array of coordinator max_wal_senders value.
+        Note that a master and the slave shares the same value of this
+        variable. 
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordNames</TT
+></DT
+><DD
+><P
+>        Array to specify coordinator names.
+        Coordinator slave uses the same name as the master.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordPgHbaEntries</TT
+></DT
+><DD
+><P
+>        Array of CIDR addresses to be added to
+        <TT
+CLASS="FILENAME"
+>pg_hba.conf</TT
+>.  
+        Will create pg_hba.conf file entry with
+        <TT
+CLASS="OPTION"
+>pgxcOwner</TT
+> user.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordPorts</TT
+></DT
+><DD
+><P
+>        Array of the listening port number for each coordinator.
+          Please note that <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> supposed that a master and its
+          slave uses the same port number.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordSlave</TT
+></DT
+><DD
+><P
+>        Specify <TT
+CLASS="LITERAL"
+>y</TT
+> if you configure coordinator
+        slave.
+        <TT
+CLASS="LITERAL"
+>n</TT
+> otherwise.   If you specify
+        <TT
+CLASS="LITERAL"
+>n</TT
+>, then all the other variables for
+        coordinator slave will be ignored.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordSlaveDir</TT
+></DT
+><DD
+><P
+>        Shortcut to assign the same work directory to all the
+          coordinator slaves.  Not needed if you specify these
+          manually.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordSlaveDirs</TT
+></DT
+><DD
+><P
+>        Array of work directory for each coordinator slaves.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordSlaveServers</TT
+></DT
+><DD
+><P
+>        Array of the hostname where slave of each
+          coordinator runs.  Specify <TT
+CLASS="LITERAL"
+>none</TT
+> if you don't configure the
+          slave for specific coordinator.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>coordSpecificExtraConfig</TT
+></DT
+><DD
+><P
+>        Array of the filename which contains extra
+          configuration values for each coordinator.   Specify <TT
+CLASS="LITERAL"
+>none</TT
+>
+          if you don't have such file.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>poolerPorts</TT
+></DT
+><DD
+><P
+>        Array of the port number for each pooler.  Pooler takes
+          care of the connection between coordinator and datanode and
+          needs separate port.   Please note that a master and its
+          slave uses the same pooler port number.
+       </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN121400"
+>F.32.11.5. Datanodes</A
+></H3
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="OPTION"
+>datanodeArchLogDir</TT
+></DT
+><DD
+><P
+>        Shortcut to assign the same WAL archive directory
+          to all the datanode slaves.  Not needed if you specify these
+          manually.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeArchLogDirs</TT
+></DT
+><DD
+><P
+>        Array of WAL archive log directory for each datanode
+          slave.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeExtraConfig</TT
+></DT
+><DD
+><P
+>        If you would like to add extra configuration value
+          for all the datanodes, specify the file name containing
+          such lines for postgresql.conf.  Specify <TT
+CLASS="LITERAL"
+>none</TT
+> otherwise.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeExtraPgHba</TT
+></DT
+><DD
+><P
+>        File name which contains entries for all the
+          datanodes' pg_hba.conf file.  Specify <TT
+CLASS="LITERAL"
+>none</TT
+> if you don't
+          have such file.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeMasterDir</TT
+></DT
+><DD
+><P
+>        Shortcut to assign the same work directory to all
+          the datanode masters.  Not needed if you specify these
+          manually.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeMasterDirs</TT
+></DT
+><DD
+><P
+>        Array of datanode master work directory.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeMaterServers</TT
+></DT
+><DD
+><P
+>        Array of the host name where each datanode master runs.
+          Specify in the order of $coordNames above.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeMaxWalSender</TT
+></DT
+><DD
+><P
+>        shortcut to assign the same value to each member of
+          datanodeMaxWalSenders.  Not needed if you assign the value
+          manually.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeMaxWalSenders</TT
+></DT
+><DD
+><P
+>        Array of datanode max_wal_senders value.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeNames</TT
+></DT
+><DD
+><P
+>        Array to specify coordinator names.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodePgHbaEntries</TT
+></DT
+><DD
+><P
+>        Array of CIDR addresses to be added to
+          pg_hba.conf.  Will create pg_hba.conf file entry with
+          $pgxcOwner user.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodePorts</TT
+></DT
+><DD
+><P
+>        Array of the listening port number for each datanode
+          (master and slave use the same port).
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeSlave</TT
+></DT
+><DD
+><P
+>        Specify <TT
+CLASS="LITERAL"
+>y</TT
+> if you configure datanode slaves.  <TT
+CLASS="LITERAL"
+>n</TT
+>
+          otherwise.   If you specify <TT
+CLASS="LITERAL"
+>n</TT
+>, all the other variables for
+          datanode slaves will be ignored.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeSlaveDir</TT
+></DT
+><DD
+><P
+>        Shortcut to assign the same work directory to all
+          the datanode slaves.  Not needed if you specify these
+          manually.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeSlaveDirs</TT
+></DT
+><DD
+><P
+>        Array of work directory for each datanode slave.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeSlaveServers</TT
+></DT
+><DD
+><P
+>        Array of the hostname where slave of each 
+          datanode runs.  Specify <TT
+CLASS="LITERAL"
+>none</TT
+> if you don't configure the
+          slave for specific coordinator.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeSpecificExtraConfig</TT
+></DT
+><DD
+><P
+>        Array of the filename which contains extra
+          configuration values for each datanode.   Specify <TT
+CLASS="LITERAL"
+>none</TT
+>
+          if you don't have such file.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>datanodeSpecificExtraPgHba</TT
+></DT
+><DD
+><P
+>        Array of file names which contain specific
+          extra pg_hba.conf entry for each datanode.  Specify <TT
+CLASS="LITERAL"
+>none</TT
+>
+          if you don't have such file.
+       </P
+></DD
+><DT
+><TT
+CLASS="OPTION"
+>primaryDataode</TT
+></DT
+><DD
+><P
+>        Specify name of the primary node.  This must be one of
+          the name in $datanodeNames.  If you don't want the primary
+          node, specify <TT
+CLASS="LITERAL"
+>N/A</TT
+> or <TT
+CLASS="LITERAL"
+>none</TT
+>.
+       </P
+></DD
+></DL
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN121508"
+>F.32.12. pgxc_ctl commands</A
+></H2
+><P
+>    <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> command names and literal options are case-insensitive.
+    Other options are case-sensitive.
+   </P
+><P
+>    If other command is given, it will be passed to your shell.
+    When the shell stops, then the control returns to <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+>.
+   </P
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><TT
+CLASS="LITERAL"
+>add gtm slave <TT
+CLASS="REPLACEABLE"
+><I
+>name</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>host</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>port</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>dir</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>add gtm_proxy <TT
+CLASS="REPLACEABLE"
+><I
+>name</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>host</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>port</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>dir</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>add coordinator master <TT
+CLASS="REPLACEABLE"
+><I
+>name</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>host</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>port</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>pooler</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>dir</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>add coordinator slave <TT
+CLASS="REPLACEABLE"
+><I
+>name</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>host</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>dir</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>archDir</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>add datanode master <TT
+CLASS="REPLACEABLE"
+><I
+>name</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>host</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>port</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>dir</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>add datanode slave <TT
+CLASS="REPLACEABLE"
+><I
+>name</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>host</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>dir</I
+></TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>archDir</I
+></TT
+></TT
+></DT
+><DD
+><P
+>      Add the specified node to your postgres-xc cluster.
+      Each node need host name and its work directory.  gtm slave,
+      gtm_proxy, coordinator master and datanode master need its own port
+      to listen to.  Coordinator needs its pooler port to pool
+      connections to datanodes.  Coordinator and datanode slave need a
+      directory to receive WAL segments from their master.
+     </P
+><P
+>      When you add coordinator and datanode master, node information at
+      all the coordinators will be updated with the new one and gtm_proxy
+      will be selected automatically based upon where the new node runs.
+     </P
+><P
+>      You cannot add slaves without master.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>Createdb [ - <TT
+CLASS="REPLACEABLE"
+><I
+>coordinator</I
+></TT
+> ] <TT
+CLASS="REPLACEABLE"
+><I
+> createdb_option ... </I
+></TT
+></TT
+></DT
+><DD
+><P
+>   Invokes createdb utility to create a new datanode using specified
+   coordinator.  If no coordinator is specified, pgxc_ctl chooses one
+   of the available ones.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>Createuser[ - <TT
+CLASS="REPLACEABLE"
+><I
+>coordinator</I
+></TT
+> ] <TT
+CLASS="REPLACEABLE"
+><I
+> createuser_option ... </I
+></TT
+></TT
+></DT
+><DD
+><P
+>      Invokes createuser utility to create a new user using specified
+      coordinator.   Of coordinator is not specified, <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> chooses
+      one of the available ones.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>deploy [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>host ...</I
+></TT
+> ]</TT
+></DT
+><DD
+><P
+>      Deploys postgres-xc binaries and other installation material to
+      specified hosts.  If "all" is specified, they will be deployed to
+      all the hosts found in the configuration file.  If list of the host
+      is specifies, deployment will be done to all the specified hosts,
+      regardless if they are found in the configuration file or not.
+      Target directory is taken from the variable <TT
+CLASS="OPTION"
+>pgxcInstallDir</TT
+>.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>failover [ gtm | coordinator <TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+> | datanode <TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+>  | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+> ]</TT
+></DT
+><DD
+><P
+>      Failover specified node to its master.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>init all</TT
+><BR><TT
+CLASS="LITERAL"
+>init <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>init gtm [ master | slave | all ]</TT
+><BR><TT
+CLASS="LITERAL"
+>init gtm_proxy [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ]</TT
+><BR><TT
+CLASS="LITERAL"
+>init coordinator <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>init coordinator [ master | slave ] [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ]</TT
+><BR><TT
+CLASS="LITERAL"
+>init datanode <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>init datanode [ master | slave ] [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ]</TT
+></DT
+><DD
+><P
+>      Initializes specified nodes.
+     </P
+><P
+>      At initialization, all the working directories of each component
+      will be created if it does not exist.  If it does, then all the
+      contents under the working directory will be removed.
+     </P
+><P
+>      When "all" option is specified, then node information at each
+      coordinator will be set up.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>kill all</TT
+><BR><TT
+CLASS="LITERAL"
+>kill <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>kill gtm [ master | slave | all ]</TT
+><BR><TT
+CLASS="LITERAL"
+>kill gtm_proxy [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ]</TT
+><BR><TT
+CLASS="LITERAL"
+>kill coordinator <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>kill coordinator [ master | slave ] [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ]</TT
+><BR><TT
+CLASS="LITERAL"
+>kill datanode <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>kill datanode [ master | slave ] [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ]</TT
+></DT
+><DD
+><P
+>      Kills specified node.   If nodename is specified and it has both
+      master and slave, then both master and slave will be chosen.
+     </P
+><P
+>      When killing components, their ports will be cleaned too.
+     </P
+><P
+>      Please be careful that you should not use <TT
+CLASS="LITERAL"
+>kill</TT
+> command unless you're ready to reinitialize all the component from the scratch.
+      Especially, when your database is in production, you must not kill the component.
+      Stop them using <TT
+CLASS="LITERAL"
+>stop</TT
+> command with <TT
+CLASS="LITERAL"
+>-m fast</TT
+> or <TT
+CLASS="LITERAL"
+>-m smart</TT
+> option.
+      This is for the test use and this command does not guarantee to maintain <SPAN
+CLASS="APPLICATION"
+>postgres-xc</SPAN
+> database cluster consistency.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>log [ variable | var ] <TT
+CLASS="REPLACEABLE"
+><I
+>varname</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>log [ message | msg ] <TT
+CLASS="REPLACEABLE"
+><I
+>message_body</I
+></TT
+></TT
+></DT
+><DD
+><P
+>   Prints the specified contents to the log file.
+   variable or var option writes specified variable name and its
+   value.
+   message or msg option writes specified message.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>monitor all</TT
+><BR><TT
+CLASS="LITERAL"
+>monitor <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>monitor gtm [ master | slave | all ]</TT
+><BR><TT
+CLASS="LITERAL"
+>monitor gtm_proxy [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ]</TT
+><BR><TT
+CLASS="LITERAL"
+>monitor coordinator <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>monitor coordinator [ master | slave ] [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ]</TT
+><BR><TT
+CLASS="LITERAL"
+>monitor datanode <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>monitor datanode [ master | slave ] [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ]</TT
+></DT
+><DD
+><P
+> Monitors if specified nodes are running.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>prepare [ <TT
+CLASS="REPLACEABLE"
+><I
+>path</I
+></TT
+> ]</TT
+></DT
+><DD
+><P
+>   Write pgxc_ctl configuration file template to the specified file.
+   If path option is not specified, target file will be default
+   configuration file, or the file specified by configFile option in
+   <TT
+CLASS="FILENAME"
+>/etc/pgxc_ctl</TT
+> or <TT
+CLASS="FILENAME"
+>~/.pgxc_ctl</TT
+>.   If you specify relative path, it
+   will be against <TT
+CLASS="FILENAME"
+>pgxc_ctl_home</TT
+>.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>Psql [ - <TT
+CLASS="REPLACEABLE"
+><I
+>coordinator</I
+></TT
+> ] <TT
+CLASS="REPLACEABLE"
+><I
+> psql_option ... </I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+></TT
+></DT
+><DD
+><P
+>   Invokes psql targetted to specified coordinator.   If no
+   coordinator is specifies, <SPAN
+CLASS="APPLICATION"
+>pgxc_ctl</SPAN
+> will choose one of the available
+   ones.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>q | quit | exit</TT
+></DT
+><DD
+><P
+>      Exits pgxc_ctl.  This command has no option.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>reconnect gtm_proxy [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ]</TT
+></DT
+><DD
+><P
+>      Reconnects specified gtm_proxy to new gtm.   This is needed after
+      you failover gtm to its slave.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>remove gtm slave</TT
+><BR><TT
+CLASS="LITERAL"
+>remove gtm_proxy <TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+> [ clean ]</TT
+><BR><TT
+CLASS="LITERAL"
+>remove coordinator [ master| slave ] <TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+> [ clean ]</TT
+><BR><TT
+CLASS="LITERAL"
+>remove datanode [ master| slave ] <TT
+CLASS="REPLACEABLE"
+><I
+>nodename</I
+></TT
+> [ clean ]</TT
+></DT
+><DD
+><P
+>      Removes the specified node from the cluster.
+      If clean option is specified, then the work directory and listening socket will be cleared.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>set <TT
+CLASS="REPLACEABLE"
+><I
+>varname value ...</I
+></TT
+></TT
+></DT
+><DD
+><P
+>      Set variable value.  You can specify multiple values to a
+      variable.   In this case simply specify these values as separated
+      value.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>show [ configuration | configure | config ] [ all | basic ]</TT
+><BR><TT
+CLASS="LITERAL"
+>show [ configuration | configure | config ] host <TT
+CLASS="REPLACEABLE"
+><I
+>hostname ... </I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>show [ configuration | configure | config ] gtm [ all | master | slave ]</TT
+><BR><TT
+CLASS="LITERAL"
+>show [ configuration | configure | config ] gtm_proxy [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>gtm_proxy_name ...</I
+></TT
+> ]</TT
+><BR><TT
+CLASS="LITERAL"
+>show [ configuration | configure | config ] [ coordinator | datanode ] [ all | master | slave ] <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+></TT
+></DT
+><DD
+><P
+>      Shows <SPAN
+CLASS="APPLICATION"
+>postgres-xc</SPAN
+> configuration.
+     </P
+><P
+>      If you specify <TT
+CLASS="LITERAL"
+>all</TT
+> or <TT
+CLASS="LITERAL"
+>basic</TT
+>, global configuration information will be given.
+     </P
+><P
+>      If you specify <TT
+CLASS="LITERAL"
+>host</TT
+> with <TT
+CLASS="REPLACEABLE"
+><I
+>hostname</I
+></TT
+> list, configuration for each <TT
+CLASS="REPLACEABLE"
+><I
+>hostname</I
+></TT
+> will be given.
+     </P
+><P
+>      If you specify <TT
+CLASS="LITERAL"
+>gtm</TT
+>, <TT
+CLASS="LITERAL"
+>gtm</TT
+> information will be given.
+      If you specify any more option, master and slave, if configured, information will be given.
+      <TT
+CLASS="LITERAL"
+>master</TT
+> and <TT
+CLASS="LITERAL"
+>slave</TT
+> option will show only specified portion of the component.
+     </P
+><P
+>      If you specify <TT
+CLASS="LITERAL"
+>gtm_proxy</TT
+>, gtm_proxy configuration will be given.
+      <TT
+CLASS="LITERAL"
+>all</TT
+> option will show all the gtm_proxy configuration.
+      Giving a list of gtm_proxy names will show specified gtm_proxy configuration.
+     </P
+><P
+>      If you specify <TT
+CLASS="LITERAL"
+>coordinator</TT
+> or <TT
+CLASS="LITERAL"
+>datanode</TT
+> option, coordinator or datanode configuration will be shown respectively.
+      <TT
+CLASS="LITERAL"
+>all</TT
+> shows bot master and slave information.
+      <TT
+CLASS="LITERAL"
+>master</TT
+> and <TT
+CLASS="LITERAL"
+>slave</TT
+> option will show each portion of the configuration.
+      You can specify a list of node name to get configuration information for specific coordinator or datanode.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>show resource datanode <TT
+CLASS="REPLACEABLE"
+><I
+>datanodename</I
+></TT
+> [ <TT
+CLASS="REPLACEABLE"
+><I
+>databasename</I
+></TT
+> [ <TT
+CLASS="REPLACEABLE"
+><I
+>username</I
+></TT
+> ] ]</TT
+></DT
+><DD
+><P
+>      Shows table names specified datanode is involved.
+      Before removing a datanode, you must be sure that no tables are involved by such a datanode.
+      This command shows what tables a given datanode is involved.
+      If you don't specify the database name, default database (the name of the owner of XC, as specified by <TT
+CLASS="LITERAL"
+>pgxcOwner</TT
+> variable, will be used.
+      If you don't specify the username, <TT
+CLASS="LITERAL"
+>pgxcOwner</TT
+> will be used.
+     </P
+><P
+>      Please note that this command is not intended to give complete information of the table distribution/replication.
+      For specific users and schemas, you should check if there's nothing left to a datanode when you're removing a datanode master safely.
+      Please also note that this command does not take care of the password.   You might be prompted for the password if it id needed.
+     </P
+><P
+>      Typical SQL statement to check if there's any table involved by removing datanode is as follows:
+      </P><PRE
+CLASS="PROGRAMLISTING"
+>SELECT pg_class.relname relation,
+           CASE
+             WHEN pclocatortype = 'H' THEN 'Hash'
+             WHEN pclocatortype = 'M' THEN 'Modulo'
+             WHEN pclocatortype = 'N' THEN 'Round Robin'
+             WHEN pclocatortype = 'R' THEN 'Replicate'
+             ELSE 'Unknown'
+           END AS distribution,
+            pg_attribute.attname attname,
+            pgxc_node.node_name nodename
+        FROM pg_class, pgxc_class, pg_attribute, pgxc_node
+        WHERE pg_class.oid = pgxc_class.pcrelid
+              and pg_class.oid = pg_attribute.attrelid
+              and pgxc_class.pcattnum = pg_attribute.attnum
+              and pgxc_node.node_name = 'datanode4'
+              and pgxc_node.oid = ANY (pgxc_class.nodeoids)
+     UNION
+     SELECT pg_class.relname relation,
+           CASE
+             WHEN pclocatortype = 'H' THEN 'Hash'
+             WHEN pclocatortype = 'M' THEN 'Modulo'
+             WHEN pclocatortype = 'N' THEN 'Round Robin'
+             WHEN pclocatortype = 'R' THEN 'Replicate'
+             ELSE 'Unknown'
+           END AS distribution,
+            '- none -' attname,
+            pgxc_node.node_name nodename
+        FROM pg_class, pgxc_class, pg_attribute, pgxc_node
+        WHERE pg_class.oid = pgxc_class.pcrelid
+              and pg_class.oid = pg_attribute.attrelid
+              and pgxc_class.pcattnum = 0
+              and pgxc_node.node_name = 'datanode4'
+              and pgxc_node.oid = ANY (pgxc_class.nodeoids)
+         ;
+      </PRE
+><P>
+     </P
+><P
+>      where <TT
+CLASS="LITERAL"
+>'datanode4'</TT
+> is the datanode name in focus.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>show [ variable | var ] [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>varname ...</I
+></TT
+> ]</TT
+></DT
+><DD
+><P
+>      Displays configuration or variable name and its value.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>start all</TT
+><BR><TT
+CLASS="LITERAL"
+>start <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>start gtm [ master | slave | all ]</TT
+><BR><TT
+CLASS="LITERAL"
+>start gtm_proxy [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ]</TT
+><BR><TT
+CLASS="LITERAL"
+>start coordinator <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>start coordinator [ master | slave ] [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ]</TT
+><BR><TT
+CLASS="LITERAL"
+>start datanode <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>start datanode [ master | slave ] [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ]</TT
+></DT
+><DD
+><P
+>      Starts specified node.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>stop all</TT
+><BR><TT
+CLASS="LITERAL"
+>stop <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+></TT
+><BR><TT
+CLASS="LITERAL"
+>stop gtm [ master | slave | all ]</TT
+><BR><TT
+CLASS="LITERAL"
+>stop gtm_proxy [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ]</TT
+><BR><TT
+CLASS="LITERAL"
+>stop coordinator <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> [ -m [ smart | fast | immediate ] </TT
+><BR><TT
+CLASS="LITERAL"
+>stop coordinator [ master | slave ] [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ] [ -m [ smart | fast | immediate ] </TT
+><BR><TT
+CLASS="LITERAL"
+>stop datanode <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> [ -m [ smart | fast | immediate ] </TT
+><BR><TT
+CLASS="LITERAL"
+>stop datanode [ master | slave ] [ all | <TT
+CLASS="REPLACEABLE"
+><I
+>nodename ...</I
+></TT
+> ] [ -m [ smart | fast | immediate ] </TT
+></DT
+><DD
+><P
+>      Stops specified node.  For datanode and coordinator, you can
+      specify stop mode as in "pg_ctl stop" command.
+     </P
+><P
+>      When you stop coordinator or datanode slave, the master will be
+      reconfigured to remove synchronous replication.
+     </P
+><P
+>      Please note that stopping coordinator or datanode in <TT
+CLASS="LITERAL"
+>-m immediate</TT
+> is not safe.   
+      This is a kind of emergency method to stop each component.
+      We have a little chance to make whole <SPAN
+CLASS="APPLICATION"
+>postgres-xc</SPAN
+> database cluster into inconsistent state.
+      Plaese use <TT
+CLASS="LITERAL"
+>-m smart</TT
+> or <TT
+CLASS="LITERAL"
+>-m fast</TT
+> option as much as possible.
+     </P
+></DD
+><DT
+><TT
+CLASS="LITERAL"
+>unregister <TT
+CLASS="REPLACEABLE"
+><I
+>unregister_option ...</I
+></TT
+></TT
+></DT
+><DD
+><P
+>   Unregisteres specified node from the gtm.  This could be needed
+   when some node crashes and would like to start new one.
+   
+     </P
+><P
+>   unregister_option is one of the following:
+   
+     </P
+><P
+>   <TT
+CLASS="OPTION"
+>-n</TT
+> <TT
+CLASS="REPLACEABLE"
+><I
+>name</I
+></TT
+>: Specifies node name to unregister. 
+     </P
+><P
+>   <TT
+CLASS="OPTION"
+>-Z</TT
+> <TT
+CLASS="LITERAL"
+>{ gtm | gtm_proxy | gtm_proxy_postmaster | coordinator | datanode }</TT
+>: 
+        Specifies the category of the specified node.
+
+     </P
+></DD
+></DL
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="pgxcclean.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="pgxcddl.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>pgxc_clean</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="contrib.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>pgxc_ddl</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

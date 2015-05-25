@@ -1,0 +1,324 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>DocBook</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="Postgres-XC 1.2.1 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Documentation"
+HREF="docguide.html"><LINK
+REL="PREVIOUS"
+TITLE="Documentation"
+HREF="docguide.html"><LINK
+REL="NEXT"
+TITLE="Tool Sets"
+HREF="docguide-toolsets.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2015-05-25T07:40:50"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Postgres-XC 1.2.1 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Documentation"
+HREF="docguide.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Documentation"
+HREF="docguide.html"
+>Fast Backward</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Appendix J. Documentation</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Documentation"
+HREF="docguide.html"
+>Fast Forward</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Tool Sets"
+HREF="docguide-toolsets.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="DOCGUIDE-DOCBOOK"
+>J.1. DocBook</A
+></H1
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+> The following description applies both to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>
+ and <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> if not described explicitly.  You can
+ read <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> as <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> except
+ for version number, which is specific to each product.</P
+></BLOCKQUOTE
+></DIV
+><P
+>   The documentation sources are written in
+   <I
+CLASS="FIRSTTERM"
+>DocBook</I
+>, which is a markup language
+   superficially similar to <ACRONYM
+CLASS="ACRONYM"
+>HTML</ACRONYM
+>.  Both of these
+   languages are applications of the <I
+CLASS="FIRSTTERM"
+>Standard Generalized
+   Markup Language</I
+>, <ACRONYM
+CLASS="ACRONYM"
+>SGML</ACRONYM
+>, which is
+   essentially a language for describing other languages.  In what
+   follows, the terms DocBook and <ACRONYM
+CLASS="ACRONYM"
+>SGML</ACRONYM
+> are both
+   used, but technically they are not interchangeable.
+  </P
+><P
+>  <SPAN
+CLASS="PRODUCTNAME"
+>DocBook</SPAN
+> allows an author to specify the
+   structure and content of a technical document without worrying
+   about presentation details.  A document style defines how that
+   content is rendered into one of several final forms.  DocBook is
+   maintained by the <A
+HREF="http://www.oasis-open.org"
+TARGET="_top"
+>   OASIS group</A
+>.  The <A
+HREF="http://www.oasis-open.org/docbook/"
+TARGET="_top"
+>   official DocBook site</A
+> has good introductory and reference documentation and
+   a complete O'Reilly book for your online reading pleasure.  The
+   <A
+HREF="http://newbiedoc.sourceforge.net/metadoc/docbook-guide.html"
+TARGET="_top"
+>   NewbieDoc Docbook Guide</A
+> is very helpful for beginners.
+   The <A
+HREF="http://www.freebsd.org/docproj/docproj.html"
+TARGET="_top"
+>   FreeBSD Documentation Project</A
+> also uses DocBook and has some good
+   information, including a number of style guidelines that might be
+   worth considering.
+  </P
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+><SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>XCONLY</I
+></SPAN
+>: The following description applies only to <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>.</P
+></BLOCKQUOTE
+></DIV
+><P
+>   To make it simpler to compare original <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>
+   documentation with <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+>, we decided to
+   generate <SPAN
+CLASS="PRODUCTNAME"
+>DocBook</SPAN
+> file from new file prefixed
+   as <TT
+CLASS="LITERAL"
+>sgmlin</TT
+>.  <TT
+CLASS="LITERAL"
+>sgmlin</TT
+> file is
+   essentially <SPAN
+CLASS="PRODUCTNAME"
+>DocBook</SPAN
+> file with additional
+   tags <TT
+CLASS="LITERAL"
+>&lt;!## tag&gt;</TT
+> and <TT
+CLASS="LITERAL"
+>&lt;!## end&gt;</TT
+>.
+   The former is a start tag and the latter is the stop tag.  These
+   tags should occupy whole line.  No other tags or CCDATA should
+   appear in the same line.  The tool <TT
+CLASS="COMMAND"
+>makesgml</TT
+> takes these
+   file, filter only <SPAN
+CLASS="PRODUCTNAME"
+>Postgres-XC</SPAN
+> specific contents and
+   generate target <TT
+CLASS="LITERAL"
+>sgml</TT
+> files.
+  </P
+><P
+>   <TT
+CLASS="LITERAL"
+>Makefile</TT
+> has been modified to accommodate these changes.
+  </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="docguide.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="docguide-toolsets.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Documentation</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="docguide.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Tool Sets</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>
