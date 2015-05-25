@@ -1,0 +1,144 @@
+# Create configuration file template
+prepare pgxc_ctl_demo.ctl
+# Let's see how it looks like
+vi pgxc_ctl_demo.ctl
+# Configuration
+show config all
+# Deploy binaries
+deploy all
+# Now initialize everyting: One GTM master, One GTM slave, four GTM proxies,
+# four coordinator masters, four coordinator slaves,
+# four datanode maasters, four datanode slaves
+init all
+# Cluster is already running.   Stop it and start again
+stop all
+start all
+# See if everything is running
+monitor all
+# Create default database.  Shortcut to select a coordinator involved.
+# The result will be propagated to all the other coordinators and
+# datanodes automatically.
+Createdb koichi
+# Psql is a shortcut to select which cordinator to use.
+# Now create some table.
+Psql
+create table t1 (a int);
+create table t2 (a int) distribute by replication;
+insert into t1 values (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),
+	   (13),(14);
+insert into t2 values (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),
+	   (13),(14);
+-- See what data is in each table
+select * from t1;
+-- ORDER BY will help
+select * from t1 order by a;
+-- Replicated table
+select * from t2;
+-- See what rows are stored for a distributed table in each datanode.
+execute direct on (datanode1) 'select * from t1';
+execute direct on (datanode2) 'select * from t1';
+execute direct on (datanode3) 'select * from t1';
+execute direct on (datanode4) 'select * from t1';
+-- See what rows are stored for a replicated table in each datanode.
+execute direct on (datanode1) 'select * from t2';
+execute direct on (datanode2) 'select * from t2';
+execute direct on (datanode3) 'select * from t2';
+execute direct on (datanode4) 'select * from t2';
+\q
+# Okay, now GTM failover,  first, kill it.
+kill gtm master
+# Then gtm slave will work as the master.
+failover gtm
+# Each gtm_proxy should know where the new master is.
+reconnect gtm_proxy all
+# Let's see that still cluster is alive.
+Psql
+select * from t1 order by a;
+select * from t2;
+-- See what rows are stored in each datanode.
+execute direct on (datanode1) 'select * from t1';
+execute direct on (datanode2) 'select * from t1';
+execute direct on (datanode3) 'select * from t1';
+execute direct on (datanode4) 'select * from t1';
+\q
+# Next, let's kill one of the datanodes
+kill datanode master datanode2
+# We need to failover the slave as the master.
+failover datanode datanode2
+# Let's see that everything is okay.
+Psql
+select * from t1 order by a;
+select * from t2;
+-- See what rows are stored in each datanode.
+execute direct on (datanode1) 'select * from t1';
+execute direct on (datanode2) 'select * from t1';
+execute direct on (datanode3) 'select * from t1';
+execute direct on (datanode4) 'select * from t1';
+\q
+# Next, we will add a datanode to the server "node10"
+# We need to deploy pgxc binary to this server in advance.
+deploy node10
+# Then add the datanode master.
+# Please note that we can add the slave in a similar manner.
+add datanode master datanode5 node10 20008 /home/koichi/pgxc/nodes/dn_master
+# Let's see what's going on.  Table distribution is not affected.
+Psql
+select * from t1 order by a;
+select * from t2;
+execute direct on (datanode1) 'select * from t1';
+execute direct on (datanode2) 'select * from t1';
+execute direct on (datanode3) 'select * from t1';
+execute direct on (datanode4) 'select * from t1';
+execute direct on (datanode5) 'select * from t1';
+-- Then redistribute tables with new datanode.
+alter table t1 add node (datanode5);
+alter table t2 add node (datanode5);
+-- See the new datanode has some portion of the data.
+execute direct on (datanode1) 'select * from t1';
+execute direct on (datanode2) 'select * from t1';
+execute direct on (datanode3) 'select * from t1';
+execute direct on (datanode4) 'select * from t1';
+execute direct on (datanode5) 'select * from t1';
+-- See the new datanode has everything of the replicated table.
+execute direct on (datanode1) 'select * from t2';
+execute direct on (datanode2) 'select * from t2';
+execute direct on (datanode3) 'select * from t2';
+execute direct on (datanode4) 'select * from t2';
+execute direct on (datanode5) 'select * from t2';
+-- Next, prepare for revmoving the datanode again.
+-- We need to redistribute tables to exclude removed datanode
+alter table t1 delete node (datanode5);
+alter table t2 delete node (datanode5);
+-- See that datanode5 does not contain any rows.  Ready to be removed.
+execute direct on (datanode1) 'select * from t1';
+execute direct on (datanode2) 'select * from t1';
+execute direct on (datanode3) 'select * from t1';
+execute direct on (datanode4) 'select * from t1';
+execute direct on (datanode5) 'select * from t1';
+-- See that datanode5 does not contain any rows of the replicated table either.
+execute direct on (datanode1) 'select * from t2';
+execute direct on (datanode2) 'select * from t2';
+execute direct on (datanode3) 'select * from t2';
+execute direct on (datanode4) 'select * from t2';
+execute direct on (datanode5) 'select * from t2';
+\q
+## Then remove the datanode.
+remove datanode master datanode5
+# See what is going on.
+Psql
+select * from t1 order by a;
+select * from t2;
+execute direct on (datanode1) 'select * from t1';
+execute direct on (datanode2) 'select * from t1';
+execute direct on (datanode3) 'select * from t1';
+execute direct on (datanode4) 'select * from t1';
+-- Now datanode5 is not a part of the cluster.
+execute direct on (datanode5) 'select * from t1';
+-- See the same in the replicated table.
+execute direct on (datanode1) 'select * from t2';
+execute direct on (datanode2) 'select * from t2';
+execute direct on (datanode3) 'select * from t2';
+execute direct on (datanode4) 'select * from t2';
+-- Then removed 'datanode5'
+execute direct on (datanode5) 'select * from t2';
+\q
