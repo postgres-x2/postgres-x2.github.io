@@ -93,6 +93,20 @@ p.plain{font-size:90%;
 	margin-left:0em;
 	font-family:Arial;}
  */
+
+/* List */
+ul.h2 {	/* after <h2> header */
+	margin-left:1em;
+	margin-right:1em;
+}
+ul.h3 {	/* after <h3> header */
+	margin-left:2em;
+	margin-right:2em;
+}
+ul.h3 {	/* after <h3> header */
+	margin-left:3em;
+	margin-right:3em;
+}
 p.plain{
 	font-family:Arial;}
 tt {font-family:monospace;}
@@ -136,6 +150,9 @@ a:active {color:#CC0033;}
 */
 /* Link color */
 a:link {color: #0000ff;}
+a:visited {color: #0000ff;}
+/*
 a:visited {color: #000080;}
+*/
 a:hover {color: #ff0000;}
 a:active {color: #ff8000;}
