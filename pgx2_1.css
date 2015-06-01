@@ -107,6 +107,10 @@ ul.h3 {	/* after <h3> header */
 	margin-left:3em;
 	margin-right:3em;
 }
+ul.h4 {	/* after <h3> header */
+	margin-left:4em;
+	margin-right:4em;
+}
 p.plain{
 	font-family:Arial;}
 tt {font-family:monospace;}
